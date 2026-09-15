@@ -1,31 +1,63 @@
 @model EcommerceApp.Models.RegisterViewModel
-<h2>Registro</h2>
-<form asp-action="Register" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group mb-2">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+@{
+    ViewData["Title"] = "Crear Cuenta";
+}
+
+<div class="container" style="max-width:480px;padding-block: clamp(30px, 6vw, 60px);">
+    <div class="card" style="padding:32px 26px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03);">
+        <div style="text-align:center;margin-bottom:24px;">
+            <div class="logo-mark" style="width:36px;height:36px;margin:0 auto 10px;font-size:16px;">N</div>
+            <h2 class="h2" style="font-size:22px;">Crea tu cuenta NODO</h2>
+            <p class="meta" style="margin-top:4px;">Guarda tus direcciones y accede al seguimiento de compras</p>
+        </div>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="meta" style="color:#dc2626;margin-bottom:12px;"></div>
+
+            <div class="field">
+                <label asp-for="FullName">Nombre Completo</label>
+                <input asp-for="FullName" class="input" placeholder="Ej. Camila Morales" />
+                <span asp-validation-for="FullName" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Email">Correo Electrónico</label>
+                <input asp-for="Email" class="input" placeholder="nombre@correo.com" />
+                <span asp-validation-for="Email" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Address">Dirección de Entrega</label>
+                <input asp-for="Address" class="input" placeholder="Calle, número, piso/depto, Ciudad" />
+                <span asp-validation-for="Address" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="grid-2" style="gap:12px;margin-bottom:0;">
+                <div class="field">
+                    <label asp-for="Password">Contraseña</label>
+                    <input asp-for="Password" type="password" class="input" placeholder="Mínimo 6 caract." />
+                    <span asp-validation-for="Password" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="ConfirmPassword">Confirmar</label>
+                    <input asp-for="ConfirmPassword" type="password" class="input" placeholder="Repite contraseña" />
+                    <span asp-validation-for="ConfirmPassword" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;font-size:14.5px;margin-top:12px;">
+                Crear mi cuenta →
+            </button>
+
+            <div style="text-align:center;margin-top:18px;font-size:13px;color:var(--muted);">
+                ¿Ya tienes una cuenta creada?
+                <a asp-action="Login" style="color:var(--accent);font-weight:600;margin-left:4px;">Inicia sesión</a>
+            </div>
+        </form>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Address"></label>
-        <input asp-for="Address" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Registrarse</button>
-</form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

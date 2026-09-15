@@ -1,47 +1,179 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EcommerceApp</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] — @StoreConfig.GetSettings().BrandName · @StoreConfig.GetSettings().Tagline</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/nodo-tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EcommerceApp.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EcommerceApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    @if (!string.IsNullOrWhiteSpace(StoreConfig.GetSettings().Announcement))
+    {
+        <div class="announcement-bar">
+            <div class="container" style="display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;">
+                <span>@StoreConfig.GetSettings().Announcement</span>
             </div>
-        </nav>
+        </div>
+    }
+    <header class="topnav">
+        <div class="container topnav-inner">
+            <!-- LOGO -->
+            <a class="logo" asp-controller="Home" asp-action="Index">
+                <span class="logo-mark">@StoreConfig.GetSettings().LogoInitial</span>
+                <span>@StoreConfig.GetSettings().BrandName</span>
+            </a>
+            
+            <!-- ENLACES DE NAVEGACIÓN -->
+            <nav class="nav-links hide-m">
+                <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Home" ? "active" : "")">Inicio</a>
+                <a asp-controller="Products" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Products" ? "active" : "")">Catálogo</a>
+                <a href="#soporte" onclick="window.NodoUI.openDrawer('soporteDrawer');return false;">Soporte y Asesoría</a>
+            </nav>
+
+            <!-- BUSCADOR -->
+            <div class="search-wrap hide-m">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20L16.2 16.2"/></svg>
+                <input id="navSearchInput" placeholder="Buscar iPhone, Galaxy, Sony…" onkeydown="if(event.key==='Enter')location.href='/Products?search='+encodeURIComponent(this.value)" />
+            </div>
+
+            <!-- BOTONES DE ACCIÓN (CARRITO, ENTRAR, REGISTRARSE) -->
+            <div class="topnav-actions">
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary btn-sm nav-btn-admin" title="Panel de Administración">⚙ Admin</a>
+                }
+                <button class="btn btn-secondary btn-sm nav-btn-cart" onclick="window.NodoUI.openDrawer('cartDrawer')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 9H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+                    <span class="hide-m">Carrito</span>
+                    <span class="pill cart-count-val" style="display:none;background:var(--accent);color:#fff;padding:2px 7px;font-size:10px;">0</span>
+                </button>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Barra de navegación rápida móvil -->
+    <div class="mobile-bar">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-ghost btn-sm" style="color:var(--surface)">Inicio</a>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-ghost btn-sm" style="color:var(--surface)">Catálogo</a>
+        <button class="btn btn-accent btn-sm" onclick="window.NodoUI.openDrawer('cartDrawer')">
+            Carrito (<span class="cart-count-val">0</span>)
+        </button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--surface)" onclick="window.NodoUI.openDrawer('soporteDrawer')">Ayuda</button>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- CART DRAWER -->
+    <div class="drawer" id="cartDrawer" aria-hidden="true">
+        <div class="drawer-backdrop" onclick="window.NodoUI.closeDrawer('cartDrawer')"></div>
+        <div class="drawer-panel">
+            <div class="drawer-head">
+                <div>
+                    <strong style="font-size:15.5px;font-family:var(--font-display);">Tu carrito de compras</strong>
+                    <div class="meta" id="cartSub" style="margin-top:2px;">0 productos seleccionados</div>
+                </div>
+                <button class="btn btn-ghost" onclick="window.NodoUI.closeDrawer('cartDrawer')">✕</button>
+            </div>
+            <div class="drawer-body" id="cartBody"></div>
+            <div class="drawer-foot" id="cartFoot"></div>
+        </div>
+    </div>
+
+    <!-- SOPORTE DRAWER -->
+    <div class="drawer" id="soporteDrawer" aria-hidden="true">
+        <div class="drawer-backdrop" onclick="window.NodoUI.closeDrawer('soporteDrawer')"></div>
+        <div class="drawer-panel" style="width:min(440px, 100%)">
+            <div class="drawer-head">
+                <div>
+                    <strong style="font-size:15.5px;font-family:var(--font-display);">Habla con un asesor NODO</strong>
+                    <div class="meta" style="margin-top:2px;">Te ayudamos a elegir el mejor equipo sin compromiso</div>
+                </div>
+                <button class="btn btn-ghost" onclick="window.NodoUI.closeDrawer('soporteDrawer')">✕</button>
+            </div>
+            <div class="drawer-body stack" style="gap:16px">
+                <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:13px;line-height:1.5;">
+                    💡 <b>Atención experta:</b> Comparativas reales de batería, cámaras, procesador y cancelación de ruido.
+                </div>
+                <div class="field">
+                    <label>Tu Nombre</label>
+                    <input class="input" id="soporteNombre" placeholder="Ej. Camila Morales" />
+                </div>
+                <div class="field">
+                    <label>Teléfono o WhatsApp</label>
+                    <input class="input" id="soporteTel" placeholder="+54 11 ..." />
+                </div>
+                <div class="field">
+                    <label>¿Qué modelo o uso buscas?</label>
+                    <textarea class="textarea" id="soporteMensaje" placeholder="Ej. Dudo entre el S24 Ultra y el iPhone 15 Pro para fotografía en viajes..."></textarea>
+                </div>
+                <button class="btn btn-accent" style="width:100%;padding:12px;" onclick="window.NodoUI.sendSupport()">Enviar mensaje al asesor →</button>
+                <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:6px;">
+                    Respuesta promedio en menos de 15 minutos en horario comercial.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK-VIEW PDP DRAWER -->
+    <div class="drawer" id="pdpDrawer" aria-hidden="true">
+        <div class="drawer-backdrop" onclick="window.NodoUI.closeDrawer('pdpDrawer')"></div>
+        <div class="drawer-panel" style="width:min(580px, 100%)">
+            <div class="drawer-head">
+                <strong style="font-size:15px;font-family:var(--font-display);">Ficha de Producto</strong>
+                <button class="btn btn-ghost" onclick="window.NodoUI.closeDrawer('pdpDrawer')">✕</button>
+            </div>
+            <div class="drawer-body" id="pdpBody"></div>
+            <div class="drawer-foot" id="pdpFoot"></div>
+        </div>
+    </div>
+
+    <footer class="pagefoot">
         <div class="container">
-            &copy; 2026 - EcommerceApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="foot-grid">
+                <div>
+                    <div class="logo" style="font-size:16px"><span class="logo-mark">@StoreConfig.GetSettings().LogoInitial</span> @StoreConfig.GetSettings().BrandName</div>
+                    <p style="color:var(--muted);font-size:13px;margin-top:10px;max-width:28ch;line-height:1.5">Tienda curada de tecnología, celulares y audio de alta fidelidad. @StoreConfig.GetSettings().Tagline</p>
+                </div>
+                <div>
+                    <strong style="font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;font-family:var(--font-mono)">Catálogo</strong>
+                    <div class="stack" style="gap:6px;margin-top:10px;font-size:13px;color:var(--muted)">
+                        <a href="/Products?category=Celulares">Smartphones & Celulares</a>
+                        <a href="/Products?category=Auriculares">Auriculares & Audio</a>
+                        <a href="/Products?sort=descuento">Ofertas & Cuotas</a>
+                    </div>
+                </div>
+                <div>
+                    <strong style="font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;font-family:var(--font-mono)">Garantía & Envíos</strong>
+                    <div class="stack" style="gap:6px;margin-top:10px;font-size:13px;color:var(--muted)">
+                        <a asp-controller="Home" asp-action="Privacy">12 Meses Garantía Oficial</a>
+                        <a href="#">Envíos sin cargo desde $@StoreConfig.GetSettings().FreeShippingThreshold.ToString("N0")</a>
+                        <a href="#">30 días de satisfacción o devolución</a>
+                    </div>
+                </div>
+                <div>
+                    <strong style="font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;font-family:var(--font-mono)">Atención al Cliente</strong>
+                    <div class="stack" style="gap:6px;margin-top:10px;font-size:13px;color:var(--muted)">
+                        <span>@StoreConfig.GetSettings().SupportEmail</span>
+                        <span>@StoreConfig.GetSettings().SupportPhone</span>
+                        <span>@StoreConfig.GetSettings().Instagram</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row-between" style="margin-top:28px;padding-top:18px;border-top:1px solid var(--border);flex-wrap:wrap;font-size:12.5px;color:var(--muted)">
+                <span>© @DateTime.UtcNow.Year @StoreConfig.GetSettings().BrandName · Tienda oficial</span>
+                <span class="meta">Pagos seguros SSL · MercadoPago · Visa · Mastercard · Hasta 12 cuotas</span>
+            </div>
         </div>
     </footer>
+
+    <div class="toast" id="toast"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

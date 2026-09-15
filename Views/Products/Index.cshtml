@@ -1,28 +1,231 @@
 @model List<EcommerceApp.Models.Product>
-<h2>Productos</h2>
-@if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
-{
-    <a href="@Url.Action("Create")" class="btn btn-primary mb-3">Crear Producto</a>
+@{
+    ViewData["Title"] = "Catálogo de Dispositivos y Audio";
 }
-<div class="row">
-    @foreach (var product in Model)
+<section class="section" style="padding-top:24px">
+<div class="container">
+    <div style="max-width:64ch;margin-bottom:28px">
+        <p class="eyebrow">CATÁLOGO CURADO · NODO SELECTION</p>
+        <h1 class="h2" style="font-size:clamp(26px, 3.2vw, 38px);">El catálogo completo, sin relleno.</h1>
+        <p class="lead" style="margin-top:10px">Solo lo que recomendaríamos a un amigo. Filtra por uso real — batería, cámara, cancelación — no por jerga técnica innecesaria.</p>
+        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+        {
+            <div class="row" style="margin-top:14px;gap:10px">
+                <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary btn-sm">⚙ Abrir Panel Admin</a>
+                <a asp-controller="Products" asp-action="Create" class="btn btn-accent btn-sm">+ Nuevo Producto</a>
+            </div>
+        }
+    </div>
+
+    <!-- Barra de búsqueda local y ordenamiento -->
+    <div class="sortbar">
+        <div class="row" style="gap:12px;flex:1;min-width:260px;">
+            <div class="search-wrap" style="width:100%;max-width:380px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20L16.2 16.2"/></svg>
+                <input id="catalogSearchInput" placeholder="Filtrar por marca, modelo o chip…" oninput="onCatalogSearch(this.value)" />
+            </div>
+            <span class="meta" id="resultsCount">Mostrando @Model.Count productos</span>
+        </div>
+        <div class="row" style="gap:10px">
+            <span class="meta">Ordenar por:</span>
+            <select class="select" style="padding:7px 12px;border-radius:999px;font-size:12.5px;width:auto" id="sortSelect" onchange="applySort()">
+                <option value="relevancia">Relevancia</option>
+                <option value="menor">Precio: menor a mayor</option>
+                <option value="mayor">Precio: mayor a menor</option>
+                <option value="descuento">Mayor descuento</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="row" style="margin-bottom:20px;gap:8px;flex-wrap:wrap">
+        <button class="chip active" data-filter="all" onclick="quickFilter('all',this)">Todos</button>
+        <button class="chip" data-filter="celular" onclick="quickFilter('celular',this)">📱 Celulares</button>
+        <button class="chip" data-filter="auricular" onclick="quickFilter('auricular',this)">🎧 Auriculares</button>
+        <span class="meta" style="margin-left:8px;align-self:center;">Filtra sin recargar · Stock y cuotas en tiempo real</span>
+    </div>
+
+    @if (!Model.Any())
     {
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="@(product.ImageUrl ?? "/images/default-product.jpg")" class="card-img-top" alt="@product.Name" />
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text">@product.Description</p>
-                    <p class="card-text"><strong>Precio:</strong> @product.Price.ToString("C")</p>
-                    <p class="card-text"><strong>Stock:</strong> @product.Stock</p>
-                    <a href="@Url.Action("Details", new { id = product.Id })" class="btn btn-info">Ver</a>
-                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+        <div class="card" style="text-align:center;padding:48px 20px">
+            <div style="font-size:36px;margin-bottom:12px;">📦</div>
+            <h3 class="h3">No hay productos disponibles</h3>
+            <p class="meta" style="margin-top:4px">La base de datos se poblará automáticamente en el próximo reinicio o desde el panel de administración.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid-4" id="plpGrid">
+        @foreach (var p in Model)
+        {
+            var cat = (p.Category ?? "").ToLower().Contains("auricular") ? "auricular" : "celular";
+            var discount = p.WasPrice.HasValue && p.WasPrice > p.Price
+                ? Math.Round((1 - p.Price / p.WasPrice.Value) * 100)
+                : 0;
+
+            <article class="p-card" data-cat="@cat" data-price="@p.Price" data-discount="@discount">
+                <div class="p-visual" onclick='window.NodoUI.openPdp({id:@p.Id, name:"@p.Name", brand:"@p.Brand", category:"@p.Category", price:@p.Price, wasPrice:@(p.WasPrice.HasValue ? p.WasPrice.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null"), spec:"@p.Spec", desc:"@p.Description", imageUrl:"@p.ImageUrl", badge:"@p.Badge"})' style="cursor:pointer" title="Ver ficha rápida">
+                    @if (!string.IsNullOrEmpty(p.Badge))
                     {
-                        <a href="@Url.Action("Edit", new { id = product.Id })" class="btn btn-warning">Editar</a>
-                        <a href="@Url.Action("Delete", new { id = product.Id })" class="btn btn-danger">Eliminar</a>
+                        <span class="badge">@p.Badge</span>
+                    }
+                    else if (p.Stock == 0)
+                    {
+                        <span class="badge" style="background:#dc2626">Sin stock</span>
+                    }
+
+                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                    {
+                        <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" onerror="this.src='/images/default-product.jpg'" />
+                    }
+                    else if (cat == "celular")
+                    {
+                        <svg width="56" height="56" viewBox="0 0 44 44" fill="none"><rect x="11" y="3" width="22" height="38" rx="5" stroke="var(--fg)" stroke-width="1.3"/><rect x="15" y="8" width="14" height="2" rx="1" fill="var(--muted)"/><circle cx="22" cy="34" r="1.6" stroke="var(--muted)"/><rect x="14" y="13" width="16" height="16" rx="2" fill="color-mix(in oklch, var(--accent) 10%, transparent)" stroke="var(--border)"/></svg>
+                    }
+                    else
+                    {
+                        <svg width="56" height="56" viewBox="0 0 44 44" fill="none"><path d="M8 18c0-7 6-11 14-11s14 4 14 11v6c0 2-1 3-2.5 4L22 35 10.5 28C9 27 8 26 8 24v-6z" stroke="var(--fg)" stroke-width="1.3"/><path d="M8 22c0 2 1 3 2.5 4L22 33l11.5-7C35 25 36 24 36 22" stroke="var(--muted)" stroke-width="1"/><circle cx="22" cy="19" r="5" fill="color-mix(in oklch, var(--accent) 10%, transparent)" stroke="var(--border)"/></svg>
                     }
                 </div>
-            </div>
+                <div class="p-body">
+                    <div class="meta">@(p.Brand ?? "NODO") · @(cat=="auricular"?"Auricular":"Celular")</div>
+                    <div class="p-title">@p.Name</div>
+                    <div class="p-spec">@(p.Spec ?? p.Description)</div>
+                    <div class="p-price">
+                        <span class="now">$@p.Price.ToString("N0", new System.Globalization.CultureInfo("es-AR"))</span>
+                        @if (p.WasPrice.HasValue && p.WasPrice > p.Price)
+                        {
+                            <span class="was">$@p.WasPrice.Value.ToString("N0", new System.Globalization.CultureInfo("es-AR"))</span>
+                            <span class="off">-@discount%</span>
+                        }
+                    </div>
+                    <div class="meta" style="font-size:11px;">
+                        @if (p.Stock > 5)
+                        {
+                            <span style="color:#16a34a">● Stock disponible (@p.Stock)</span>
+                        }
+                        else if (p.Stock > 0)
+                        {
+                            <span style="color:#d97706">● Últimas @p.Stock unidades</span>
+                        }
+                        else
+                        {
+                            <span style="color:#dc2626">● Agotado temporalmente</span>
+                        }
+                    </div>
+                    <button type="button" class="btn btn-primary p-add btn-sm" 
+                            data-id="@p.Id" 
+                            data-name="@p.Name" 
+                            data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+                            data-brand="@(p.Brand ?? "")" 
+                            data-category="@(p.Category ?? "")" 
+                            data-spec="@(p.Spec ?? "")" 
+                            data-image="@(p.ImageUrl ?? "")"
+                            onclick="window.NodoCart.addFromButton(this)">
+                        Agregar al carrito
+                    </button>
+                    <div class="row" style="gap:6px;margin-top:2px;">
+                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-ghost btn-sm" style="flex:1;font-size:12px;">Ficha completa →</a>
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-secondary btn-sm" style="padding:4px 8px;font-size:11px;">Editar</a>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
         </div>
     }
 </div>
+</section>
+
+<section class="section" id="soporte" style="background:var(--surface);border-top:1px solid var(--border);">
+<div class="container grid-2" style="align-items:center;">
+    <div>
+        <p class="eyebrow">SOPORTE HUMANO · FRIENDLY SERVICE</p>
+        <h2 class="h2">Te explicamos la tecnología como si estuviéramos al lado.</h2>
+        <p class="lead" style="margin-top:10px">Nada de manuales de 40 páginas. Guías de 2 minutos, video y chat humano por especialistas que usan los productos a diario.</p>
+    </div>
+    <div class="card" style="padding:22px;border-radius:18px;">
+        <h3 class="h3">¿Necesitas ayuda para elegir?</h3>
+        <p class="meta" style="margin-top:6px">Cuéntanos tu presupuesto y uso principal (juegos, fotos, batería, teletrabajo) y te asesoramos.</p>
+        <button onclick="window.NodoUI.openDrawer('soporteDrawer')" class="btn btn-accent" style="width:100%;margin-top:16px;">
+            Hablar con un asesor ahora →
+        </button>
+    </div>
+</div>
+</section>
+
+@section Scripts {
+<script>
+let currentCat = 'all';
+let currentSearch = '';
+
+function quickFilter(cat, btn){
+    currentCat = cat;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+}
+
+function onCatalogSearch(v){
+    currentSearch = v.toLowerCase().trim();
+    applyFilters();
+}
+
+function applyFilters(){
+    const cards = document.querySelectorAll('#plpGrid .p-card');
+    let visible = 0;
+    cards.forEach(card => {
+        const cat = card.dataset.cat;
+        const text = card.innerText.toLowerCase();
+        const matchesCat = (currentCat === 'all' || cat === currentCat);
+        const matchesSearch = (!currentSearch || text.includes(currentSearch));
+
+        if (matchesCat && matchesSearch) {
+            card.style.display = '';
+            visible++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    const resultsCount = document.getElementById('resultsCount');
+    if (resultsCount) {
+        resultsCount.textContent = `Mostrando ${visible} ${visible === 1 ? 'producto' : 'productos'}`;
+    }
+}
+
+function applySort(){
+    const sort = document.getElementById('sortSelect').value;
+    const grid = document.getElementById('plpGrid');
+    if (!grid) return;
+    const cards = [...grid.children];
+    cards.sort((a,b)=>{
+        const pa = parseFloat(a.dataset.price) || 0;
+        const pb = parseFloat(b.dataset.price) || 0;
+        const da = parseFloat(a.dataset.discount) || 0;
+        const db = parseFloat(b.dataset.discount) || 0;
+
+        if (sort === 'menor') return pa - pb;
+        if (sort === 'mayor') return pb - pa;
+        if (sort === 'descuento') return db - da;
+        return 0;
+    });
+    cards.forEach(c => grid.appendChild(c));
+}
+
+// Check search query in URL
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const s = urlParams.get('search');
+    if (s) {
+        const input = document.getElementById('catalogSearchInput');
+        if (input) {
+            input.value = s;
+            onCatalogSearch(s);
+        }
+    }
+});
+</script>
+}

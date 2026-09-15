@@ -1,32 +1,127 @@
 @model EcommerceApp.Models.Product
-<h2>Editar Producto</h2>
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group mb-2">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
+@{
+    ViewData["Title"] = $"Editar {Model.Name} · NODO";
+}
+
+<section class="section" style="padding-top:20px;">
+<div class="container" style="max-width:760px;">
+    <div class="row-between" style="margin-bottom:20px;">
+        <div>
+            <p class="eyebrow">CATÁLOGO · MODIFICACIÓN</p>
+            <h1 class="h2">Editar: @Model.Name</h1>
+        </div>
+        <div class="row" style="gap:8px;">
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-ghost btn-sm">Ver producto</a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">← Catálogo</a>
+        </div>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+
+    <div class="card" style="padding:28px 24px;border-radius:20px;">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="meta" style="color:#dc2626;margin-bottom:14px;"></div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Name">Nombre Comercial *</label>
+                    <input asp-for="Name" class="input" />
+                    <span asp-validation-for="Name" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Brand">Marca *</label>
+                    <input asp-for="Brand" class="input" />
+                    <span asp-validation-for="Brand" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Category">Categoría *</label>
+                    <select asp-for="Category" class="select">
+                        <option value="celular">Celular / Smartphone</option>
+                        <option value="auricular">Auricular / Audio</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Spec">Especificación Clave</label>
+                    <input asp-for="Spec" class="input" />
+                    <span asp-validation-for="Spec" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label asp-for="Description">Descripción *</label>
+                <textarea asp-for="Description" class="textarea"></textarea>
+                <span asp-validation-for="Description" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="grid-3" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Price">Precio Actual ($ ARS) *</label>
+                    <input asp-for="Price" type="number" step="1" class="input" />
+                    <span asp-validation-for="Price" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="WasPrice">Precio Anterior</label>
+                    <input asp-for="WasPrice" type="number" step="1" class="input" />
+                    <span asp-validation-for="WasPrice" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Stock">Stock en Almacén *</label>
+                    <input asp-for="Stock" type="number" class="input" />
+                    <span asp-validation-for="Stock" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Badge">Etiqueta Badge</label>
+                    <input asp-for="Badge" class="input" />
+                    <span asp-validation-for="Badge" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="ImageUrl">URL de Imagen</label>
+                    <input asp-for="ImageUrl" type="url" class="input" />
+                    <span asp-validation-for="ImageUrl" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div id="previewWrapper" style="@(string.IsNullOrEmpty(Model.ImageUrl) ? "display:none;" : "")padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;margin-bottom:18px;">
+                <div class="meta" style="margin-bottom:6px;">Vista previa:</div>
+                <img id="imagePreview" src="@Model.ImageUrl" alt="Vista previa" style="max-height:140px;object-fit:contain;" onerror="this.style.display='none'" />
+            </div>
+
+            <div class="row" style="gap:10px;margin-top:10px;">
+                <button type="submit" class="btn btn-primary" style="padding:12px 24px;">Guardar cambios</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Price"></label>
-        <input asp-for="Price" class="form-control" />
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Stock"></label>
-        <input asp-for="Stock" class="form-control" />
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="ImageUrl"></label>
-        <input asp-for="ImageUrl" class="form-control" />
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Category"></label>
-        <input asp-for="Category" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-</form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+</div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const imgInput = document.querySelector('input[name="ImageUrl"]');
+        const imgPreview = document.getElementById('imagePreview');
+        const previewWrap = document.getElementById('previewWrapper');
+        if (imgInput && imgPreview && previewWrap) {
+            imgInput.addEventListener('input', () => {
+                const url = imgInput.value.trim();
+                if (url) {
+                    imgPreview.src = url;
+                    imgPreview.style.display = 'block';
+                    previewWrap.style.display = 'block';
+                } else {
+                    previewWrap.style.display = 'none';
+                }
+            });
+        }
+    </script>
+}

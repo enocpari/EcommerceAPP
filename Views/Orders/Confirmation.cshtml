@@ -1,0 +1,263 @@
+@model EcommerceApp.Models.Order
+@{
+    ViewData["Title"] = $"¡Pedido #{Model.OrderNumber} Confirmado! · NODO";
+}
+
+<div class="container" style="max-width:880px;padding:36px 16px 72px;">
+    <!-- Success Badge & Heading -->
+    <div style="text-align:center;margin-bottom:32px;">
+        <div style="width:68px;height:68px;border-radius:50%;background:rgba(22,163,74,0.12);border:2px solid #16a34a;color:#16a34a;display:grid;place-items:center;margin:0 auto 16px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <p class="eyebrow" style="color:#16a34a;margin-bottom:6px;">COMPRA EXITOSA · ORDEN GENERADA</p>
+        <h1 class="h1" style="font-size:30px;letter-spacing:-0.02em;margin:0 0 10px;">¡Tu pedido ha sido registrado con éxito!</h1>
+        <p class="meta" style="font-size:15px;max-width:560px;margin:0 auto;">
+            Hola <strong>@Model.CustomerName</strong>, hemos generado tu orden de compra en NODO. A continuación tienes tu recibo y token oficial de transacción.
+        </p>
+    </div>
+
+    <!-- Official Transaction Token & Digital Receipt Card -->
+    <div style="background:var(--surface);border:2px solid var(--accent);border-radius:18px;padding:24px;margin-bottom:24px;box-shadow:0 10px 30px rgba(0,0,0,0.06);">
+        <div class="row-between" style="flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(22,163,74,0.12);color:#16a34a;display:grid;place-items:center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <strong style="font-size:15px;letter-spacing:0.02em;text-transform:uppercase;">Recibo Oficial & Token de Transacción</strong>
+            </div>
+            <span class="tag" style="background:#16a34a;color:#fff;font-weight:700;font-size:11px;padding:4px 9px;">REGISTRADO EN SISTEMA</span>
+        </div>
+
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+                <span class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;display:block;">TOKEN DE COMPROBANTE / SEGUIMIENTO / RECLAMOS</span>
+                <span id="transTokenVal" style="font-family:var(--font-mono);font-size:21px;font-weight:800;color:var(--accent);letter-spacing:0.03em;">@Model.TransactionToken</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('@Model.TransactionToken'); window.NodoUI.showToast('✓ Token copiado al portapapeles');" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar Token
+            </button>
+        </div>
+
+        <div style="margin-top:14px;font-size:12.5px;color:var(--muted);line-height:1.5;display:flex;align-items:start;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;color:var(--accent);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div>
+                <strong>Guarda este token de transacción:</strong> Es el registro unívoco compartido entre tú y el panel administrativo de NODO. Puedes presentarlo ante soporte técnico o atención al cliente para realizar consultas, validar tu pago o tramitar cualquier reclamo de forma inmediata.
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Summary Card -->
+    <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);margin-bottom:24px;">
+        <div class="row-between" style="flex-wrap:wrap;gap:16px;align-items:center;">
+            <div>
+                <span class="meta" style="font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;display:block;">Número de Pedido</span>
+                <span style="font-family:var(--font-mono);font-size:24px;font-weight:800;color:var(--accent);">#@Model.OrderNumber</span>
+            </div>
+            <div>
+                <span class="meta" style="font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;display:block;">Estado del Pedido</span>
+                <span class="status s-preparando" style="font-size:12px;padding:4px 10px;margin-top:2px;">
+                    <span class="status-dot"></span>@Model.Status
+                </span>
+            </div>
+            <div>
+                <span class="meta" style="font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;display:block;">Fecha de Registro</span>
+                <span style="font-size:13.5px;font-weight:600;">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+
+        <!-- Timeline steps -->
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;text-align:center;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#16a34a;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;">1</div>
+                <span style="font-size:11.5px;font-weight:600;">Recibido</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.85;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;">2</div>
+                <span style="font-size:11.5px;font-weight:600;">Preparación</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.4;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--fg);display:grid;place-items:center;font-size:12px;">3</div>
+                <span style="font-size:11.5px;">Despacho</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.4;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--fg);display:grid;place-items:center;font-size:12px;">4</div>
+                <span style="font-size:11.5px;">Entregado</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 Column Details: Customer and Items -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px;align-items:start;margin-bottom:32px;">
+        
+        <!-- Left: Customer Info & Shipping Destination -->
+        <div class="stack" style="gap:20px;">
+            <div class="card" style="padding:22px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <h3 class="h3" style="font-size:16px;margin:0;">Destino y Comprador</h3>
+                </div>
+
+                <div class="stack" style="gap:12px;font-size:13px;">
+                    <div>
+                        <span class="meta" style="font-size:10.5px;text-transform:uppercase;">Nombre del Titular</span>
+                        <div style="font-weight:700;font-size:14px;color:var(--fg);">@Model.CustomerName</div>
+                    </div>
+
+                    <!-- Highlighted Document ID / Carnet -->
+                    <div style="background:var(--bg);border:1px solid var(--border);padding:10px 14px;border-radius:10px;">
+                        <span class="meta" style="font-size:10.5px;text-transform:uppercase;display:block;margin-bottom:2px;">Carnet de Identidad / DNI Registrado</span>
+                        <div style="font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--accent);">
+                            CI/DNI: @Model.DocumentId
+                        </div>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div>
+                            <span class="meta" style="font-size:10.5px;text-transform:uppercase;">Teléfono / WhatsApp</span>
+                            <div style="font-weight:600;">@Model.Phone</div>
+                        </div>
+                        <div>
+                            <span class="meta" style="font-size:10.5px;text-transform:uppercase;">Email</span>
+                            <div style="word-break:break-all;">@Model.Email</div>
+                        </div>
+                    </div>
+
+                    <div style="padding-top:8px;border-top:1px solid var(--border);">
+                        <span class="meta" style="font-size:10.5px;text-transform:uppercase;">Dirección de Entrega</span>
+                        <div style="font-weight:600;margin-top:2px;">@Model.Address</div>
+                        <div class="meta" style="font-size:12px;">@Model.City, @Model.Province @(!string.IsNullOrWhiteSpace(Model.PostalCode) ? $"({Model.PostalCode})" : "")</div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <div>
+                            <span class="meta" style="font-size:10.5px;text-transform:uppercase;">Instrucciones</span>
+                            <div style="font-style:italic;margin-top:2px;">"@Model.Notes"</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Payment Instructions Box -->
+            <div class="card" style="padding:22px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <h3 class="h3" style="font-size:16px;margin:0;">Forma de Pago Seleccionada</h3>
+                </div>
+                <div style="font-weight:700;font-size:14px;margin-bottom:8px;">@Model.PaymentMethod</div>
+                
+                @if (Model.PaymentMethod.Contains("QR") || Model.PaymentMethod.Contains("Transferencia"))
+                {
+                    <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:12.5px;" class="stack" style="gap:6px;">
+                        <p class="meta" style="margin:0;">Transfiere o escanea el QR con tu app bancaria favorita:</p>
+                        <div><strong>Banco:</strong> Banco Industrial / Santander</div>
+                        <div><strong>Titular:</strong> NODO TECNOLOGIA S.A.</div>
+                        <div><strong>Alias / CBU:</strong> <span style="font-family:var(--font-mono);font-weight:700;color:var(--accent);">NODO.OFICIAL.TECH</span></div>
+                        <div><strong>Referencia / Token:</strong> <span style="font-family:var(--font-mono);font-weight:700;">@Model.TransactionToken</span></div>
+                        @if (!string.IsNullOrWhiteSpace(Model.PaymentReference))
+                        {
+                            <div style="margin-top:4px;padding-top:6px;border-top:1px dashed var(--border);">
+                                <strong>Comprobante registrado:</strong> <span style="font-family:var(--font-mono);color:var(--accent);font-weight:700;">@Model.PaymentReference</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (Model.PaymentMethod.Contains("Efectivo"))
+                {
+                    <p class="meta" style="font-size:12.5px;margin:0;">
+                        Ten listo el importe exacto de <strong>$@Model.Total.ToString("N0")</strong> al momento de recibir o retirar tus productos.
+                    </p>
+                }
+                else
+                {
+                    <p class="meta" style="font-size:12.5px;margin:0;">
+                        Tu pago ha sido registrado y enlazado al token de transacción oficial.
+                        @if (!string.IsNullOrWhiteSpace(Model.PaymentReference))
+                        {
+                            <br /><span>Comprobante / N° Op: <strong>@Model.PaymentReference</strong></span>
+                        }
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Right: Ordered Items List & Total -->
+        <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+            <h3 class="h3" style="font-size:16px;margin-bottom:16px;">Artículos Adquiridos (@Model.Items.Count)</h3>
+
+            <div class="stack" style="gap:14px;margin-bottom:20px;">
+                @foreach (var item in Model.Items)
+                {
+                    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <div style="width:48px;height:48px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex-shrink:0;">
+                            @if (!string.IsNullOrWhiteSpace(item.ProductImageUrl))
+                            {
+                                <img src="@item.ProductImageUrl" alt="@item.ProductName" style="max-height:100%;max-width:100%;object-fit:contain;" />
+                            }
+                            else
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--muted);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            }
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@item.ProductName</div>
+                            <div class="meta" style="font-size:11.5px;">@item.Quantity un. × $@item.UnitPrice.ToString("N0")</div>
+                        </div>
+                        <div style="font-family:var(--font-mono);font-weight:700;font-size:13.5px;">
+                            $@item.TotalPrice.ToString("N0")
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Financial Breakdown -->
+            <div style="border-top:1px solid var(--border);padding-top:14px;" class="stack" style="gap:8px;">
+                <div class="row-between" style="font-size:13.5px;">
+                    <span class="meta">Subtotal:</span>
+                    <span style="font-family:var(--font-mono);">$@Model.Subtotal.ToString("N0")</span>
+                </div>
+                <div class="row-between" style="font-size:13.5px;">
+                    <span class="meta">Envío:</span>
+                    <span style="font-family:var(--font-mono);color:#16a34a;font-weight:600;">@(Model.ShippingCost == 0 ? "Bonificado $0" : $"${Model.ShippingCost:N0}")</span>
+                </div>
+                <div class="row-between" style="padding-top:12px;border-top:2px solid var(--border);font-size:18px;font-weight:800;">
+                    <span>Total Pagado:</span>
+                    <span style="font-family:var(--font-mono);color:var(--accent);">$@Model.Total.ToString("N0")</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir Comprobante Oficial
+        </button>
+        <a href="/" class="btn btn-ghost">Volver a la Tienda</a>
+        <a href="/Products" class="btn btn-accent">Seguir Comprando</a>
+        <a asp-action="Track" asp-route-orderNumber="@Model.OrderNumber" class="btn btn-ghost">Rastrear Pedido</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Al llegar a la confirmación, limpiamos el carrito local en el navegador
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if (window.NodoCart && typeof window.NodoCart.clear === 'function') {
+                    window.NodoCart.clear();
+                } else {
+                    localStorage.removeItem('nodo_cart_items');
+                    if (window.NodoCart && typeof window.NodoCart.refresh === 'function') {
+                        window.NodoCart.refresh();
+                    }
+                }
+            } catch(e) {
+                console.error("Error al limpiar carrito:", e);
+            }
+        });
+    </script>
+}

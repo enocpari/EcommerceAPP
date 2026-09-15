@@ -1,0 +1,326 @@
+@model IEnumerable<EcommerceApp.Models.Order>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Gestión de Pedidos";
+    var currentStatus = (string?)ViewBag.CurrentStatus ?? "all";
+    var currentSearch = (string?)ViewBag.CurrentSearch ?? "";
+    decimal totalSales = ViewBag.TotalSales != null ? (decimal)ViewBag.TotalSales : 0m;
+}
+
+<div style="max-width:1240px;margin:0 auto;">
+    <!-- Header Section -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+        <div>
+            <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">
+                <span class="status-dot" style="width:6px;height:6px;background:var(--accent);"></span>
+                Operaciones & Logística
+            </div>
+            <h1 class="h1" style="font-size:26px;letter-spacing:-0.02em;margin:0 0 4px;">Control y Despacho de Pedidos</h1>
+            <p class="meta" style="font-size:13px;margin:0;">
+                Supervisión en tiempo real de órdenes de compra, validación de carnets de identidad y envíos
+            </p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <a asp-action="Orders" class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Actualizar
+            </a>
+            <button class="btn btn-secondary btn-sm" onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimir Manifiesto
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#15803d;padding:12px 18px;border-radius:12px;margin-bottom:20px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- UI/UX Pro Max: Real-Time Operational KPI Cards -->
+    <div class="orders-kpi-grid">
+        <!-- KPI 1: Facturación Total -->
+        <a asp-action="Orders" asp-route-status="all" class="kpi-card @(currentStatus == "all" && string.IsNullOrEmpty(currentSearch) ? "active" : "")">
+            <div class="kpi-card-head">
+                <span class="kpi-card-title">Ventas Totales</span>
+                <div class="kpi-card-icon" style="color:var(--accent);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+            </div>
+            <div class="kpi-card-value">$@totalSales.ToString("N0")</div>
+            <div class="kpi-card-sub">
+                <strong>@ViewBag.CountAll</strong> pedidos registrados
+            </div>
+        </a>
+
+        <!-- KPI 2: Pendientes de Pago -->
+        <a asp-action="Orders" asp-route-status="pendiente" class="kpi-card @(currentStatus == "pendiente" ? "active" : "")">
+            <div class="kpi-card-head">
+                <span class="kpi-card-title">Pendientes de Pago</span>
+                <div class="kpi-card-icon" style="color:#d97706;background:rgba(217,119,6,0.1);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+            </div>
+            <div class="kpi-card-value" style="color:#d97706;">@ViewBag.CountPendiente</div>
+            <div class="kpi-card-sub">
+                Esperando acreditación
+            </div>
+        </a>
+
+        <!-- KPI 3: En Preparación -->
+        <a asp-action="Orders" asp-route-status="preparando" class="kpi-card @(currentStatus == "preparando" ? "active" : "")">
+            <div class="kpi-card-head">
+                <span class="kpi-card-title">En Preparación</span>
+                <div class="kpi-card-icon" style="color:#7c3aed;background:rgba(124,58,237,0.1);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+            </div>
+            <div class="kpi-card-value" style="color:#7c3aed;">@ViewBag.CountPreparando</div>
+            <div class="kpi-card-sub">
+                Empaquetando en depósito
+            </div>
+        </a>
+
+        <!-- KPI 4: En Tránsito / Despacho -->
+        <a asp-action="Orders" asp-route-status="camino" class="kpi-card @(currentStatus == "camino" ? "active" : "")">
+            <div class="kpi-card-head">
+                <span class="kpi-card-title">En Camino</span>
+                <div class="kpi-card-icon" style="color:#0d9488;background:rgba(13,148,136,0.1);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+            </div>
+            <div class="kpi-card-value" style="color:#0d9488;">@ViewBag.CountCamino</div>
+            <div class="kpi-card-sub">
+                Con chofer o correo
+            </div>
+        </a>
+
+        <!-- KPI 5: Entregados -->
+        <a asp-action="Orders" asp-route-status="entregado" class="kpi-card @(currentStatus == "entregado" ? "active" : "")">
+            <div class="kpi-card-head">
+                <span class="kpi-card-title">Entregados</span>
+                <div class="kpi-card-icon" style="color:#16a34a;background:rgba(22,163,74,0.1);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+            </div>
+            <div class="kpi-card-value" style="color:#16a34a;">@ViewBag.CountEntregado</div>
+            <div class="kpi-card-sub">
+                Recepciones conformes
+            </div>
+        </a>
+    </div>
+
+    <!-- UI/UX Pro Max: Clean Toolbar with Segmented Filter Chips + Integrated Search -->
+    <div class="orders-toolbar">
+        <!-- Segmented Filter Chips (Independent of Bootstrap .row) -->
+        <div class="orders-filter-chips">
+            <a asp-action="Orders" asp-route-status="all" asp-route-search="@currentSearch" class="order-chip @(currentStatus == "all" ? "active" : "")">
+                Todos <span class="order-chip-badge">@ViewBag.CountAll</span>
+            </a>
+            <a asp-action="Orders" asp-route-status="pendiente" asp-route-search="@currentSearch" class="order-chip @(currentStatus == "pendiente" ? "active" : "")">
+                <span class="status-dot" style="width:6px;height:6px;background:#d97706;"></span>
+                Pendientes <span class="order-chip-badge">@ViewBag.CountPendiente</span>
+            </a>
+            <a asp-action="Orders" asp-route-status="preparando" asp-route-search="@currentSearch" class="order-chip @(currentStatus == "preparando" ? "active" : "")">
+                <span class="status-dot" style="width:6px;height:6px;background:#7c3aed;"></span>
+                En preparación <span class="order-chip-badge">@ViewBag.CountPreparando</span>
+            </a>
+            <a asp-action="Orders" asp-route-status="camino" asp-route-search="@currentSearch" class="order-chip @(currentStatus == "camino" ? "active" : "")">
+                <span class="status-dot" style="width:6px;height:6px;background:#0d9488;"></span>
+                En camino <span class="order-chip-badge">@ViewBag.CountCamino</span>
+            </a>
+            <a asp-action="Orders" asp-route-status="entregado" asp-route-search="@currentSearch" class="order-chip @(currentStatus == "entregado" ? "active" : "")">
+                <span class="status-dot" style="width:6px;height:6px;background:#16a34a;"></span>
+                Entregados <span class="order-chip-badge">@ViewBag.CountEntregado</span>
+            </a>
+        </div>
+
+        <!-- Search Form -->
+        <form method="get" asp-action="Orders" style="display:flex;align-items:center;gap:8px;margin:0;">
+            <input type="hidden" name="status" value="@currentStatus" />
+            <div class="orders-search-input-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" name="search" value="@currentSearch" placeholder="Buscar pedido #NODO, token TRX-, cliente, carnet/DNI..." />
+                @if (!string.IsNullOrWhiteSpace(currentSearch))
+                {
+                    <a asp-action="Orders" asp-route-status="@currentStatus" style="color:var(--muted);text-decoration:none;font-size:14px;padding:0 4px;" title="Limpiar búsqueda">✕</a>
+                }
+            </div>
+            <button type="submit" class="btn btn-secondary btn-sm" style="padding:7px 14px;font-size:12.5px;">Buscar</button>
+        </form>
+    </div>
+
+    <!-- Data Table Card -->
+    @if (!Model.Any())
+    {
+        <div style="background:var(--surface);border:1px dashed var(--border);border-radius:18px;padding:54px 24px;text-align:center;">
+            <div style="width:54px;height:54px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;margin:0 auto 16px;color:var(--muted);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h3 style="font-size:17px;font-weight:700;margin:0 0 6px;">No se encontraron pedidos</h3>
+            <p class="meta" style="font-size:13px;max-width:440px;margin:0 auto 18px;">
+                No hay pedidos que coincidan con el estado seleccionado o el criterio de búsqueda.
+            </p>
+            <a asp-action="Orders" class="btn btn-secondary btn-sm">Ver todos los pedidos</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap" style="box-shadow:0 4px 20px rgba(0,0,0,0.02);">
+            <table class="ds-table">
+                <thead>
+                    <tr>
+                        <th style="width:110px;">N° Pedido</th>
+                        <th style="width:130px;">Fecha</th>
+                        <th>Cliente & Carnet</th>
+                        <th>Destino</th>
+                        <th>Artículos</th>
+                        <th>Pago</th>
+                        <th>Estado Logístico</th>
+                        <th class="num-col" style="width:110px;">Total</th>
+                        <th style="text-align:right;width:150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var statusClass = "s-pendiente";
+                        var s = item.Status.ToLower();
+                        if (s.Contains("prepara") || s.Contains("empaqueta")) { statusClass = "s-preparando"; }
+                        else if (s.Contains("pago")) { statusClass = "s-pago"; }
+                        else if (s.Contains("camino") || s.Contains("transito") || s.Contains("tránsito")) { statusClass = "s-enviado"; }
+                        else if (s.Contains("entrega")) { statusClass = "s-entregado"; }
+
+                        <tr>
+                            <!-- Order Number (No-wrap monospace) -->
+                            <td>
+                                <a asp-action="OrderDetail" asp-route-id="@item.Id" class="order-code">
+                                    #@item.OrderNumber
+                                </a>
+                                @if (!string.IsNullOrWhiteSpace(item.TransactionToken))
+                                {
+                                    <div style="margin-top:3px;">
+                                        <span class="doc-badge" style="font-size:10px;padding:1px 5px;" title="Token de Transacción / Recibo: @item.TransactionToken">
+                                            @item.TransactionToken
+                                        </span>
+                                    </div>
+                                }
+                            </td>
+
+                            <!-- Date and Time -->
+                            <td>
+                                <div style="font-size:12.5px;font-weight:500;white-space:nowrap;">
+                                    @item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")
+                                </div>
+                                <div class="meta" style="font-size:11px;font-family:var(--font-mono);">
+                                    @item.CreatedAt.ToLocalTime().ToString("HH:mm") hs
+                                </div>
+                            </td>
+
+                            <!-- Customer & Document ID (Carnet de Identidad highlighted) -->
+                            <td>
+                                <div style="font-weight:700;font-size:13.5px;color:var(--fg);margin-bottom:3px;">
+                                    @item.CustomerName
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+                                    <span class="doc-badge" title="Documento / Carnet de Identidad">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+                                        CI/DNI: @item.DocumentId
+                                    </span>
+                                </div>
+                                <div class="meta" style="font-size:11px;display:flex;align-items:center;gap:4px;">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    @item.Phone
+                                </div>
+                            </td>
+
+                            <!-- Delivery Destination -->
+                            <td>
+                                <div style="font-size:12.5px;max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;" title="@item.Address">
+                                    @item.Address
+                                </div>
+                                <div class="meta" style="font-size:11.5px;margin-top:2px;">
+                                    @item.City, @item.Province
+                                </div>
+                            </td>
+
+                            <!-- Items Snapshot -->
+                            <td>
+                                <div style="font-size:12.5px;line-height:1.35;max-width:210px;">
+                                    @if (item.Items.Any())
+                                    {
+                                        var firstItem = item.Items.First();
+                                        <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="@firstItem.ProductName">
+                                            @firstItem.ProductName @(firstItem.Quantity > 1 ? $"×{firstItem.Quantity}" : "")
+                                        </div>
+                                        @if (item.Items.Count > 1)
+                                        {
+                                            <span class="meta" style="display:inline-block;font-size:11px;color:var(--muted);margin-top:2px;">
+                                                + @(item.Items.Count - 1) producto(s) más
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="meta">Sin artículos</span>
+                                    }
+                                </div>
+                            </td>
+
+                            <!-- Payment Method Tag -->
+                            <td>
+                                <span class="tag" style="font-size:10.5px;font-weight:600;white-space:nowrap;">
+                                    @item.PaymentMethod
+                                </span>
+                                @if (!string.IsNullOrWhiteSpace(item.PaymentReference))
+                                {
+                                    <div class="meta" style="font-size:10.5px;font-family:var(--font-mono);color:var(--accent);margin-top:3px;" title="Comprobante: @item.PaymentReference">
+                                        Ref: @item.PaymentReference
+                                    </div>
+                                }
+                            </td>
+
+                            <!-- Logistic Status & Tracking Badge -->
+                            <td>
+                                <span class="status @statusClass">
+                                    <span class="status-dot"></span>@item.Status
+                                </span>
+                                @if (!string.IsNullOrWhiteSpace(item.TrackingNumber))
+                                {
+                                    <div style="margin-top:4px;">
+                                        <span class="tracking-badge" title="Código de Guía / Tracking">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+                                            @item.TrackingNumber
+                                        </span>
+                                    </div>
+                                }
+                            </td>
+
+                            <!-- Total Price -->
+                            <td class="num-col" style="font-weight:800;font-size:14px;white-space:nowrap;color:var(--fg);">
+                                $@item.Total.ToString("N0")
+                            </td>
+
+                            <!-- Actions (View details & Edit with vector SVG icons) -->
+                            <td style="text-align:right;white-space:nowrap;">
+                                <div style="display:inline-flex;gap:6px;align-items:center;">
+                                    <a asp-action="OrderDetail" asp-route-id="@item.Id" class="btn-action-view" title="Ver detalles completos del pedido">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        Detalles
+                                    </a>
+                                    <a asp-action="EditOrder" asp-route-id="@item.Id" class="btn-action-edit" title="Editar pedido">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        Editar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

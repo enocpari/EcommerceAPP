@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Acceso Denegado";
+}
+<div class="text-center mt-5">
+    <h1 class="text-danger">Acceso Denegado</h1>
+    <p class="lead">No tienes permisos para acceder a este recurso.</p>
+    <p>Solo usuarios con rol <strong>Admin</strong> pueden crear/editar/eliminar productos.</p>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-primary mt-3">Volver a Productos</a>
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary mt-3 ms-2">Iniciar Sesión</a>
+    }
+</div>

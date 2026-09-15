@@ -1,22 +1,70 @@
 @model EcommerceApp.Models.LoginViewModel
-<h2>Iniciar Sesión</h2>
-<form asp-action="Login" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group mb-2">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="container" style="max-width:440px;padding-block: clamp(30px, 6vw, 60px);">
+    <div class="card" style="padding:28px 24px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03);">
+        <div style="text-align:center;margin-bottom:20px;">
+            <div class="logo-mark" style="width:36px;height:36px;margin:0 auto 10px;font-size:16px;">N</div>
+            <h2 class="h2" style="font-size:22px;">Acceso a tu cuenta</h2>
+            <p class="meta" style="margin-top:4px;">Gestiona pedidos, garantías y acceso de administración</p>
+        </div>
+
+        <!-- Demo account selector -->
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:18px;">
+            <div class="meta" style="font-weight:600;color:var(--fg);margin-bottom:6px;">Cuentas demo de prueba:</div>
+            <div class="row" style="gap:6px;flex-wrap:wrap;">
+                <button type="button" class="chip" style="font-size:11px;padding:4px 10px;" onclick="fillDemo('admin@ecommerce.com','Admin123!')">
+                    🔑 Admin (Gestión total)
+                </button>
+                <button type="button" class="chip" style="font-size:11px;padding:4px 10px;" onclick="fillDemo('user@ecommerce.com','User123!')">
+                    👤 Usuario demo
+                </button>
+            </div>
+        </div>
+
+        <form asp-action="Login" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+            <div asp-validation-summary="ModelOnly" class="meta" style="color:#dc2626;margin-bottom:10px;"></div>
+
+            <div class="field">
+                <label asp-for="Email">Correo Electrónico</label>
+                <input asp-for="Email" id="loginEmail" class="input" placeholder="usuario@correo.com" />
+                <span asp-validation-for="Email" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Password">Contraseña</label>
+                <input asp-for="Password" id="loginPass" type="password" class="input" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="row-between" style="margin-block:12px 18px;">
+                <label class="row" style="gap:8px;font-size:13px;color:var(--muted);cursor:pointer;">
+                    <input asp-for="RememberMe" type="checkbox" style="accent-color:var(--fg);" />
+                    <span>Recordarme en este equipo</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;font-size:14.5px;">
+                Iniciar Sesión →
+            </button>
+
+            <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted);">
+                ¿No tienes cuenta aún?
+                <a asp-action="Register" style="color:var(--accent);font-weight:600;margin-left:4px;">Regístrate gratis</a>
+            </div>
+        </form>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-group form-check mb-2">
-        <input asp-for="RememberMe" class="form-check-input" />
-        <label asp-for="RememberMe" class="form-check-label"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-    <a href="@Url.Action("Register")" class="btn btn-link">Registrarse</a>
-</form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function fillDemo(email, pass){
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPass').value = pass;
+            window.NodoUI.showToast('Credenciales completadas');
+        }
+    </script>
+}

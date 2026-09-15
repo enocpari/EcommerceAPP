@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NODO — Panel Administrativo</title>
+<style>
+:root{
+  --bg: oklch(99% 0.002 240);
+  --surface: oklch(100% 0 0);
+  --fg: oklch(18% 0.012 250);
+  --muted: oklch(54% 0.012 250);
+  --border: oklch(92% 0.005 250);
+  --accent: oklch(58% 0.18 255);
+  --accent-soft: color-mix(in oklch, var(--accent) 10%, transparent);
+  --fg-soft: color-mix(in oklch, var(--fg) 6%, transparent);
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --fs-h1: clamp(28px, 3.5vw, 36px);
+  --fs-h2: clamp(22px, 2.5vw, 28px);
+  --fs-h3: 16px;
+  --fs-lead: 15px;
+  --fs-body: 14px;
+  --fs-meta: 11.5px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --container: 1280px;
+  --gutter: 22px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--fs-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+p{margin:0}
+h1,h2,h3{margin:0;letter-spacing:-0.02em}
+img,svg{display:block;max-width:100%}
+.container{max-width:var(--container);margin-inline:auto;padding-inline:var(--gutter)}
+.section{padding-block:32px}
+.stack{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:1024px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}}
+.h1{font-family:var(--font-display);font-size:var(--fs-h1);font-weight:700;line-height:1.05}
+.h2{font-family:var(--font-display);font-size:var(--fs-h2);font-weight:680;line-height:1.08}
+.h3{font-size:var(--fs-h3);font-weight:600}
+.lead{color:var(--muted);font-size:var(--fs-lead);max-width:56ch}
+.eyebrow{font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.meta{font-family:var(--font-mono);font-size:var(--fs-meta);color:var(--muted)}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:999px;border:1px solid transparent;font-size:13.5px;font-weight:600;transition:all .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--fg);color:var(--surface);border-color:var(--fg)}
+.btn-primary:hover{background:color-mix(in oklch, var(--fg) 86%, black)}
+.btn-accent{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.btn-accent:hover{background:color-mix(in oklch, var(--accent) 85%, black)}
+.btn-secondary{background:var(--surface);color:var(--fg);border-color:var(--border)}
+.btn-secondary:hover{border-color:var(--fg)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--fg);padding-inline:10px}
+.btn-ghost:hover{color:var(--accent)}
+.btn-sm{padding:7px 12px;font-size:12.5px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
+.pill{display:inline-flex;align-items:center;padding:4px 9px;background:var(--accent-soft);color:var(--accent);border-radius:999px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.04em;text-transform:uppercase;font-weight:700}
+.tag{display:inline-flex;align-items:center;padding:4px 9px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-size:11px;color:var(--muted)}
+.input,.select,.textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font:inherit;font-size:13.5px;color:var(--fg)}
+.input:focus,.select:focus,.textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.input.err{border-color:oklch(58% 0.18 22)}
+.textarea{min-height:76px;resize:vertical}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:var(--font-mono)}
+.ds-table{width:100%;border-collapse:collapse;font-size:13px}
+.ds-table th,.ds-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.ds-table th{color:var(--muted);font-weight:600;font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.05em;text-transform:uppercase}
+.ds-table tbody tr:hover{background:var(--fg-soft)}
+.num-col{font-family:var(--font-mono);text-align:right;white-space:nowrap}
+.rule{border:0;border-top:1px solid var(--border);margin:0}
+/* admin layout */
+.admin{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.admin-sidebar{background:var(--surface);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.admin-brand{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:28px;height:28px;border-radius:9px;background:var(--fg);color:var(--surface);display:grid;place-items:center;font-size:13px;font-weight:700}
+.nav{padding:12px 10px;display:flex;flex-direction:column;gap:4px;flex:1;overflow:auto}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13.5px;color:var(--muted);border:1px solid transparent}
+.nav a.active{background:var(--fg);color:var(--surface);border-color:var(--fg)}
+.nav a:hover:not(.active){background:var(--bg);color:var(--fg);border-color:var(--border)}
+.nav a svg{flex-shrink:0}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border)}
+.admin-main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:10;background:color-mix(in oklch, var(--bg) 86%, var(--surface));backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.search{position:relative;flex:1;max-width:480px}
+.search input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:13px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.kpi{display:flex;flex-direction:column;gap:10px}
+.kpi-top{display:flex;align-items:center;justify-content:space-between}
+.kpi-value{font-family:var(--font-display);font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1}
+.kpi-label{font-size:12.5px;color:var(--muted)}
+.kpi-spark{display:flex;align-items:end;gap:3px;height:28px}
+.kpi-spark i{flex:1;border-radius:3px;background:color-mix(in oklch, var(--accent) 22%, var(--border));}
+.bar-chart{display:flex;align-items:end;gap:6px;height:120px;padding-top:10px}
+.bar{flex:1;background:var(--border);border-radius:6px 6px 0 0;position:relative}
+.bar.active{background:var(--fg)}
+.bar::after{content:attr(data-v);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;color:var(--muted);white-space:nowrap}
+.status{padding:4px 8px;border-radius:999px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.04em;text-transform:uppercase;font-weight:700;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px}
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.s-pendiente{background:oklch(96% 0.03 85);color:oklch(48% 0.12 55);border-color:oklch(90% 0.05 85)}
+.s-pago{background:oklch(96% 0.03 200);color:oklch(48% 0.12 240);border-color:oklch(88% 0.06 240)}
+.s-preparando{background:oklch(95% 0.04 260);color:oklch(42% 0.14 260);border-color:oklch(86% 0.08 260)}
+.s-enviado{background:oklch(96% 0.04 170);color:oklch(42% 0.1 170);border-color:oklch(86% 0.06 170)}
+.s-entregado{background:oklch(94% 0.05 145);color:oklch(38% 0.11 145);border-color:oklch(84% 0.08 145)}
+.s-cancelado{background:var(--bg);color:var(--muted);border-color:var(--border)}
+.stock-dot{width:8px;height:8px;border-radius:50%}
+.dot-green{background:oklch(62% 0.16 145)}
+.dot-amber{background:oklch(78% 0.15 75)}
+.dot-red{background:oklch(60% 0.2 25)}
+.view{display:none}
+.view.active{display:block}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface)}
+.table-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font-size:12px;color:var(--muted);cursor:pointer}
+.chip.active{background:var(--fg);color:var(--surface);border-color:var(--fg)}
+.drawer{position:fixed;inset:0;z-index:50;display:none}
+.drawer.open{display:block}
+.drawer-back{position:absolute;inset:0;background:color-mix(in oklch, var(--fg) 42%, transparent);backdrop-filter:blur(4px)}
+.drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;animation:slide .22s ease}
+@keyframes slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.drawer-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.drawer-body{flex:1;overflow:auto;padding:18px}
+.drawer-foot{padding:14px 18px;border-top:1px solid var(--border);background:var(--surface)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--fg);color:var(--surface);padding:11px 16px;border-radius:999px;font-size:12.5px;font-weight:600;opacity:0;transition:.26s;z-index:60}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.hide{display:none !important}
+.mobile-toggle{display:none}
+@media(max-width:900px){
+  .admin{grid-template-columns:1fr}
+  .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;transform:translateX(-100%);transition:.22s;z-index:40;height:100vh}
+  .admin-sidebar.open{transform:translateX(0)}
+  .mobile-toggle{display:inline-flex}
+  .topbar{padding-inline:14px}
+}
+</style>
+</head>
+<body>
+<div class="admin">
+  <aside class="admin-sidebar" id="sidebar" data-od-id="admin-sidebar">
+    <div class="admin-brand">
+      <span class="logo-mark">e</span>
+      <div>
+        <div style="font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;line-height:1">expresstech</div>
+        <div class="meta" style="font-size:10px">Panel administrativo</div>
+      </div>
+      <span class="pill" style="margin-left:auto">v1</span>
+    </div>
+    <nav class="nav" id="sideNav">
+      <a href="#" class="active" data-view="resumen" onclick="switchView('resumen');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg> Resumen
+      </a>
+      <a href="#" data-view="productos" onclick="switchView('productos');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 10h10M7 14h6"></path></svg> Productos <span class="meta" id="navProdCount" style="margin-left:auto">16</span>
+      </a>
+      <a href="#" data-view="pedidos" onclick="switchView('pedidos');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 9H7L6 7z"></path><path d="M9 7V5a3 3 0 0 1 6 0v2"></path></svg> Pedidos <span class="pill" id="navOrderPending" style="margin-left:auto;padding:3px 7px;font-size:10px">5</span>
+      </a>
+      <a href="#" data-view="inventario" onclick="switchView('inventario');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-5 9 5-9 5-9-5z"></path><path d="M3 15l9 5 9-5"></path><path d="M3 12l9 5 9-5"></path></svg> Inventario
+      </a>
+      <a href="#" data-view="clientes" onclick="switchView('clientes');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 18c1.5-2.5 4.5-4 7-4s5.5 1.5 7 4"></path></svg> Clientes
+      </a>
+      <a href="#" data-view="cupones" onclick="switchView('cupones');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h18l-2 4 2 4H3l2-4-2-4z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg> Cupones
+      </a>
+      <a href="#" data-view="categorias" onclick="switchView('categorias');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="4" rx="1.5"/><rect x="14" y="9" width="7" height="12" rx="1.5"/><rect x="3" y="12" width="7" height="9" rx="1.5"/></svg> Categorías
+      </a>
+      <a href="#" data-view="devoluciones" onclick="switchView('devoluciones');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 8H5V4"/><path d="M5 8l6 6 6-6"/><path d="M15 16h4v4"/><path d="M19 16l-6-6-6 6"/></svg> Devoluciones <span class="pill" style="margin-left:auto;padding:3px 7px;font-size:10px">2</span>
+      </a>
+      <a href="#" data-view="banners" onclick="switchView('banners');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg> Banners
+      </a>
+      <a href="#" data-view="ajustes" onclick="switchView('ajustes');return false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"></path></svg> Ajustes
+      </a>
+      <div style="margin:10px 0 6px" class="meta">Tienda</div>
+      <a href="ecommerce-celular-auricular.html" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3L10 14"></path><path d="M3 21l11-11"></path></svg> Ver tienda
+      </a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="row">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--fg);color:var(--surface);display:grid;place-items:center;font-size:12px;font-weight:700">A</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Admin NODO</div>
+          <div class="meta" style="font-size:11px">admin@nodo.com.ar</div>
+        </div>
+        <select class="select" style="width:auto;padding:6px 8px;font-size:12px;border-radius:999px" id="roleSel" onchange="onRole(this.value)">
+          <option value="admin">Admin</option>
+          <option value="stock">Stock</option>
+          <option value="soporte">Soporte</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="topbar" data-od-id="topbar">
+      <button class="btn btn-secondary btn-sm mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.2 16.2"></path></svg>
+        <input id="globalSearch" placeholder="Buscar producto, pedido #NODO, cliente…" oninput="onGlobalSearch(this.value)">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="showToast('3 productos con stock bajo — revisa Inventario')">🔔 <span class="pill" id="alertCount">3</span></button>
+      <button class="btn btn-primary btn-sm hide" id="newBtn" onclick="openProductDrawer()">+ Nuevo producto</button>
+      <button class="btn btn-accent btn-sm" id="newBtnAlt" onclick="openProductDrawer()">+ Nuevo producto</button>
+    </div>
+
+    <!-- RESUMEN -->
+    <section class="view active" data-od-id="view-resumen" id="view-resumen" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Resumen · Hoy 10 sep 2026</p>
+        <div class="row-between" style="flex-wrap:wrap">
+          <h1 class="h1">Todo bajo control.</h1>
+          <div class="row">
+            <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Exportar CSV</button>
+            <button class="btn btn-ghost btn-sm" onclick="resetDemo()">Reiniciar demo</button>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-top:18px">
+          <div class="card kpi" data-od-id="kpi-ventas">
+            <div class="kpi-top"><span class="meta">Ventas (7 días)</span><span class="pill">+12%</span></div>
+            <div class="num kpi-value" id="kpiVentas">$8.420.000</div>
+            <div class="kpi-label">Ticket promedio <span class="num" style="font-weight:700">$342.000</span></div>
+            <div class="kpi-spark" id="spark1"></div>
+          </div>
+          <div class="card kpi" data-od-id="kpi-pedidos">
+            <div class="kpi-top"><span class="meta">Pedidos pendientes</span><span class="status s-pendiente" style="padding:3px 7px"><span class="status-dot" style="background:oklch(48% 0.12 55)"></span>Acción</span></div>
+            <div class="num kpi-value" id="kpiPendientes">5</div>
+            <div class="kpi-label"><span id="kpiPago">4</span> pagos confirmados · <span id="kpiPrep">2</span> preparando</div>
+            <div class="row" style="margin-top:6px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="switchView('pedidos')">Ver pedidos</button></div>
+          </div>
+          <div class="card kpi" data-od-id="kpi-stock">
+            <div class="kpi-top"><span class="meta">Stock crítico</span><span class="status s-cancelado">Revisar</span></div>
+            <div class="num kpi-value" id="kpiStock">3</div>
+            <div class="kpi-label">Productos con &lt; 5 unidades</div>
+            <div class="row" style="margin-top:6px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="switchView('inventario')">Ir a inventario</button></div>
+          </div>
+          <div class="card kpi" data-od-id="kpi-top">
+            <div class="kpi-top"><span class="meta">Top producto</span><span class="meta">Esta semana</span></div>
+            <div style="font-weight:700;font-size:14px;margin-top:4px">iPhone 15 Pro · 18 ventas</div>
+            <div class="kpi-label">Sony WH-1000XM5 · 14 ventas</div>
+            <div class="row" style="gap:6px;margin-top:8px"><span class="tag">Apple 32%</span><span class="tag">Sony 18%</span></div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:14px">
+          <div class="card" data-od-id="chart-ventas">
+            <div class="row-between"><h3>Ventas últimos 7 días</h3><span class="meta">En miles · $</span></div>
+            <div class="bar-chart" id="barChart"></div>
+            <div class="row-between" style="margin-top:8px"><span class="meta">Lun</span><span class="meta">Mar</span><span class="meta">Mié</span><span class="meta">Jue</span><span class="meta">Vie</span><span class="meta">Sáb</span><span class="meta">Dom</span></div>
+          </div>
+          <div class="card" data-od-id="alerts">
+            <h3>Alertas operativas</h3>
+            <div class="stack" style="gap:10px;margin-top:12px" id="alertsList"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;padding:0;overflow:hidden" data-od-id="recent-orders">
+          <div class="row-between" style="padding:14px 16px">
+            <h3>Últimos pedidos</h3>
+            <button class="btn btn-ghost btn-sm" onclick="switchView('pedidos')">Ver todos →</button>
+          </div>
+          <div class="table-wrap" style="border:0;border-top:1px solid var(--border);border-radius:0">
+            <table class="ds-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Items</th><th class="num-col">Total</th><th>Estado</th><th></th></tr></thead><tbody id="recentBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="view" data-od-id="view-productos" id="view-productos" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Catálogo · 32 modelos curados (mostrando 16)</p>
+        <div class="row-between" style="flex-wrap:wrap">
+          <h1 class="h1">Productos</h1>
+          <div class="row" style="flex-wrap:wrap">
+            <select class="select" style="width:auto;border-radius:999px" id="prodCatFilter" onchange="renderProducts()"><option value="all">Todas las categorías</option><option value="celular">Celulares</option><option value="auricular">Auriculares</option></select>
+            <select class="select" style="width:auto;border-radius:999px" id="prodStatusFilter" onchange="renderProducts()"><option value="all">Todos los estados</option><option value="activo">Activos</option><option value="borrador">Borrador</option></select>
+            <select class="select" style="width:auto;border-radius:999px" id="prodSort" onchange="renderProducts()"><option value="recientes">Más recientes</option><option value="precioAsc">Precio ↑</option><option value="precioDesc">Precio ↓</option><option value="stock">Stock ↓</option></select>
+          </div>
+        </div>
+        <div class="table-actions" style="margin-top:14px">
+          <div class="row" style="gap:8px;flex-wrap:wrap">
+            <button class="chip active" data-bulk="all" onclick="filterBrandChip(this,'all')">Todas</button>
+            <button class="chip" onclick="filterBrandChip(this,'Apple')">Apple</button>
+            <button class="chip" onclick="filterBrandChip(this,'Samsung')">Samsung</button>
+            <button class="chip" onclick="filterBrandChip(this,'Sony')">Sony</button>
+            <button class="chip" onclick="filterBrandChip(this,'Bose')">otros</button>
+          </div>
+          <div class="row" style="gap:8px">
+            <span class="meta" id="prodCount">16 productos</span>
+            <button class="btn btn-secondary btn-sm" onclick="duplicateSelected()">Duplicar</button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteSelected()">Eliminar</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="ds-table">
+            <thead><tr><th style="width:32px"><input type="checkbox" id="selAll" onchange="toggleSelAll(this.checked)"></th><th>Producto</th><th>Marca</th><th>Categoría</th><th class="num-col">Precio</th><th class="num-col">Stock</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="prodBody"></tbody>
+          </table>
+        </div>
+        <div class="row-between" style="margin-top:10px"><span class="meta" id="prodPagInfo">Página 1 de 2</span><div class="row"><button class="btn btn-secondary btn-sm" onclick="prodPage=Math.max(1,prodPage-1);renderProducts()">Anterior</button><button class="btn btn-secondary btn-sm" onclick="prodPage++;renderProducts()">Siguiente</button></div></div>
+      </div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="view" data-od-id="view-pedidos" id="view-pedidos" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Operación · 18 pedidos mock</p>
+        <h1 class="h1">Pedidos</h1>
+        <div class="table-actions" style="margin-top:14px">
+          <div class="row" style="flex-wrap:wrap;gap:8px">
+            <button class="chip active" onclick="filterOrderStatus('all',this)">Todos</button>
+            <button class="chip" onclick="filterOrderStatus('Pendiente',this)">Pendiente</button>
+            <button class="chip" onclick="filterOrderStatus('Pago confirmado',this)">Pago ok</button>
+            <button class="chip" onclick="filterOrderStatus('Enviado',this)">Enviados</button>
+          </div>
+          <select class="select" style="width:auto;border-radius:999px" id="orderSort" onchange="renderOrders()"><option value="recientes">Recientes primero</option><option value="totalDesc">Mayor total</option></select>
+        </div>
+        <div class="table-wrap">
+          <table class="ds-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Items</th><th class="num-col">Total</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody id="orderBody"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section class="view" data-od-id="view-inventario" id="view-inventario" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Stock · Depósito CABA</p>
+        <div class="row-between"><h1 class="h1">Inventario</h1><button class="btn btn-secondary btn-sm" onclick="exportCSV()">Exportar CSV</button></div>
+        <div class="grid-3" style="margin-top:14px">
+          <div class="card" style="padding:14px;display:flex;align-items:center;gap:12px"><span class="stock-dot dot-red"></span><div><div class="num" style="font-weight:700;font-size:18px" id="invRed">3</div><div class="meta">Stock crítico (&lt;5)</div></div></div>
+          <div class="card" style="padding:14px;display:flex;align-items:center;gap:12px"><span class="stock-dot dot-amber"></span><div><div class="num" style="font-weight:700;font-size:18px" id="invAmber">4</div><div class="meta">Stock medio (5-10)</div></div></div>
+          <div class="card" style="padding:14px;display:flex;align-items:center;gap:12px"><span class="stock-dot dot-green"></span><div><div class="num" style="font-weight:700;font-size:18px" id="invGreen">9</div><div class="meta">Stock ok (&gt;10)</div></div></div>
+        </div>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="ds-table"><thead><tr><th>Producto</th><th class="num-col">Stock</th><th>Mínimo</th><th>Ubicación</th><th>Editar</th></tr></thead><tbody id="invBody"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="view" data-od-id="view-clientes" id="view-clientes" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Base · 142 clientes</p>
+        <h1 class="h1">Clientes</h1>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="ds-table"><thead><tr><th>Cliente</th><th>Contacto</th><th class="num-col">Pedidos</th><th class="num-col">Total gastado</th><th>Última compra</th><th></th></tr></thead><tbody id="clientBody"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUPONES -->
+    <section class="view" data-od-id="view-cupones" id="view-cupones" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Promos · Códigos activos</p>
+        <div class="row-between" style="flex-wrap:wrap">
+          <h1 class="h1">Cupones</h1>
+          <button class="btn btn-accent btn-sm" onclick="openCouponDrawer()">+ Crear cupón</button>
+        </div>
+        <div class="grid-3" style="margin-top:14px">
+          <div class="card" style="padding:14px"><div class="meta">Cupones activos</div><div class="num" style="font-size:22px;font-weight:700" id="couponActive">3</div><div class="meta">NODO10 · 10% · expira 30 sep</div></div>
+          <div class="card" style="padding:14px"><div class="meta">Usos este mes</div><div class="num" style="font-size:22px;font-weight:700">142</div><div class="meta">$1.240.000 descontados</div></div>
+          <div class="card" style="padding:14px"><div class="meta">Conversión</div><div class="num" style="font-size:22px;font-weight:700">18%</div><div class="meta">de pedidos con cupón</div></div>
+        </div>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="ds-table"><thead><tr><th>Código</th><th class="num-col">Descuento</th><th>Mínimo</th><th>Usos</th><th>Vence</th><th>Estado</th><th></th></tr></thead><tbody id="couponBody"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIAS -->
+    <section class="view" data-od-id="view-categorias" id="view-categorias" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Catálogo · Estructura</p>
+        <div class="row-between" style="flex-wrap:wrap"><h1 class="h1">Categorías y marcas</h1><button class="btn btn-secondary btn-sm" onclick="showToast('Categoría creada')">+ Nueva categoría</button></div>
+        <div class="grid-2" style="margin-top:14px">
+          <div class="card">
+            <h3>Categorías</h3>
+            <div class="stack" style="gap:8px;margin-top:12px" id="catList"></div>
+          </div>
+          <div class="card">
+            <h3>Marcas</h3>
+            <div class="stack" style="gap:8px;margin-top:12px" id="brandList"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="showToast('Marca agregada')">+ Agregar marca</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEVOLUCIONES -->
+    <section class="view" data-od-id="view-devoluciones" id="view-devoluciones" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">Post-venta · 30 días</p>
+        <div class="row-between"><h1 class="h1">Devoluciones</h1><span class="meta">2 pendientes · SLA 48 h</span></div>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="ds-table"><thead><tr><th>Solicitud</th><th>Pedido</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th></th></tr></thead><tbody id="returnBody"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNERS -->
+    <section class="view" data-od-id="view-banners" id="view-banners" style="padding:20px">
+      <div style="max-width:1100px">
+        <p class="eyebrow">CMS · Home y destacados</p>
+        <h1 class="h1">Banners</h1>
+        <div class="grid-2" style="margin-top:14px">
+          <div class="card">
+            <div style="height:140px;border-radius:12px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;position:relative;overflow:hidden">
+              <div style="text-align:center"><div class="pill">Hero</div><div style="font-weight:700;margin-top:6px">Celulares y auriculares que sí entiendes</div><div class="meta">Curamos 32 modelos · 12 cuotas</div></div>
+              <span class="status s-entregado" style="position:absolute;top:10px;right:10px">Activo</span>
+            </div>
+            <div class="row-between" style="margin-top:12px"><div><div style="font-weight:600;font-size:13px">Hero principal</div><div class="meta">Home · 1920×640</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('Banner editado')">Editar</button></div>
+          </div>
+          <div class="card">
+            <h3>Destacados del home</h3>
+            <p class="meta" style="margin-top:4px">Elige 4 productos para el hero y la grilla destacada</p>
+            <div class="stack" style="gap:8px;margin-top:12px" id="featuredEdit"></div>
+            <button class="btn btn-accent btn-sm" style="margin-top:12px;width:100%" onclick="showToast('Destacados actualizados')">Guardar destacados</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Configurar promesa</h3>
+          <div class="grid-3" style="margin-top:12px">
+            <div class="field"><label>Trustbar 1</label><input class="input" value="Entrega 24 h en CABA / 48 h país"/></div>
+            <div class="field"><label>Trustbar 2</label><input class="input" value="Garantía 12 meses oficial"/></div>
+            <div class="field"><label>Trustbar 3</label><input class="input" value="Hasta 12 cuotas sin interés"/></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="showToast('Promesas guardadas')">Guardar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AJUSTES -->
+    <section class="view" data-od-id="view-ajustes" id="view-ajustes" style="padding:20px">
+      <div style="max-width:780px">
+        <p class="eyebrow">Configuración</p>
+        <h1 class="h1">Ajustes</h1>
+        <div class="card" style="margin-top:14px">
+          <h3>Datos de la tienda</h3>
+          <div class="grid-2" style="margin-top:12px">
+            <div class="field"><label>Nombre</label><input class="input" id="setName" value="NODO"></div>
+            <div class="field"><label>Email</label><input class="input" value="hola@nodo.com.ar"></div>
+            <div class="field"><label>Dirección</label><input class="input" value="Av. Corrientes 1234, CABA"></div>
+            <div class="field"><label>Teléfono</label><input class="input" value="+54 11 4856-8890"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Envíos y pagos</h3>
+          <div class="grid-2" style="margin-top:12px">
+            <div class="field"><label>Umbral envío gratis (ARS)</label><input class="input" id="setFree" value="199000"></div>
+            <div class="field"><label>Cuotas sin interés</label><select class="select"><option>3 cuotas</option><option selected="">6 cuotas</option><option>12 cuotas</option></select></div>
+          </div>
+          <div style="margin-top:12px">
+            <label class="meta" style="display:block;margin-bottom:6px">Códigos de descuento</label>
+            <div class="table-wrap">
+              <table class="ds-table"><thead><tr><th>Código</th><th class="num-col">%</th><th>Activo</th><th></th></tr></thead><tbody><tr><td class="num">NODO10</td><td class="num-col">10%</td><td><span class="status s-entregado" style="padding:3px 8px">Activo</span></td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr><tr><td class="num">NODO20</td><td class="num-col">20%</td><td><span class="status s-cancelado" style="padding:3px 8px">Inactivo</span></td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr></tbody></table>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Usuarios del panel</h3>
+          <table class="ds-table" style="margin-top:8px"><thead><tr><th>Usuario</th><th>Rol</th><th></th></tr></thead><tbody><tr><td>Admin NODO · admin@nodo.com.ar</td><td>Admin</td><td><button class="btn btn-ghost btn-sm">Gestionar</button></td></tr><tr><td>Lucía Stock · lucia@nodo.com.ar</td><td>Stock</td><td><button class="btn btn-ghost btn-sm">Gestionar</button></td></tr></tbody></table>
+          <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="showToast('Invitación enviada')">+ Invitar usuario</button>
+        </div>
+        <div style="margin-top:14px" class="row"><button class="btn btn-primary" onclick="saveSettings()">Guardar cambios</button><button class="btn btn-ghost" onclick="showToast('Cambios descartados')">Descartar</button></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Drawer Producto -->
+<div class="drawer" id="prodDrawer">
+  <div class="drawer-back" onclick="closeDrawer('prodDrawer')"></div>
+  <div class="drawer-panel" style="width:min(560px,100%)">
+    <div class="drawer-head"><strong id="prodDrawerTitle">Nuevo producto</strong><button class="btn btn-ghost" onclick="closeDrawer('prodDrawer')">✕</button></div>
+    <div class="drawer-body stack" style="gap:14px" id="prodForm">
+      <div class="field"><label>Nombre *</label><input class="input" id="fName" placeholder="Ej: iPhone 16"></div>
+      <div class="grid-2" style="gap:12px">
+        <div class="field"><label>Marca *</label><select class="select" id="fBrand"><option>Apple</option><option>Samsung</option><option>Google</option><option>Sony</option><option>Bose</option><option>Sennheiser</option><option>JBL</option><option>Xiaomi</option><option>Motorola</option><option>Nothing</option></select></div>
+        <div class="field"><label>Categoría *</label><select class="select" id="fCat"><option value="celular">Celular</option><option value="auricular">Auricular</option></select></div>
+      </div>
+      <div class="field"><label>Spec (corto)</label><input class="input" id="fSpec" placeholder="Ej: 128 GB · Titanio · A17 Pro"></div>
+      <div class="field"><label>Descripción</label><textarea class="textarea" id="fDesc" placeholder="Describe el valor para el cliente…"></textarea></div>
+      <div class="grid-2" style="gap:12px">
+        <div class="field"><label>Precio *</label><input class="input" id="fPrice" type="number" placeholder="1299000"></div>
+        <div class="field"><label>Precio anterior (para OFF)</label><input class="input" id="fWas" type="number" placeholder="1399000"></div>
+      </div>
+      <div class="grid-2" style="gap:12px">
+        <div class="field"><label>Stock *</label><input class="input" id="fStock" type="number" value="12"></div>
+        <div class="field"><label>Estado</label><select class="select" id="fStatus"><option value="activo">Activo</option><option value="borrador">Borrador</option></select></div>
+      </div>
+      <div class="field"><label>Badge</label><input class="input" id="fBadge" placeholder="Ej: Más vendido, -15%, Nuevo"></div>
+      <p class="meta">Los cambios se guardan en localStorage y se reflejan en la tienda.</p>
+    </div>
+    <div class="drawer-foot row-between">
+      <button class="btn btn-ghost" onclick="closeDrawer('prodDrawer')">Cancelar</button>
+      <button class="btn btn-accent" onclick="saveProduct()">Guardar producto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer Cupón -->
+<div class="drawer" id="couponDrawer">
+  <div class="drawer-back" onclick="closeDrawer('couponDrawer')"></div>
+  <div class="drawer-panel" style="width:min(480px,100%)">
+    <div class="drawer-head"><strong id="couponDrawerTitle">Nuevo cupón</strong><button class="btn btn-ghost" onclick="closeDrawer('couponDrawer')">✕</button></div>
+    <div class="drawer-body stack" style="gap:14px">
+      <div class="field"><label>Código *</label><input class="input" id="cCode" placeholder="Ej: NODO15"/></div>
+      <div class="grid-2" style="gap:12px"><div class="field"><label>Descuento % *</label><input class="input" id="cPerc" type="number" value="10"/></div><div class="field"><label>Mínimo ARS</label><input class="input" id="cMin" type="number" value="199000"/></div></div>
+      <div class="grid-2" style="gap:12px"><div class="field"><label>Vence</label><input class="input" id="cExp" type="date" value="2026-09-30"/></div><div class="field"><label>Estado</label><select class="select" id="cActive"><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></div></div>
+      <div class="field"><label>Usos máximos</label><input class="input" id="cUses" type="number" value="100"/></div>
+    </div>
+    <div class="drawer-foot row-between"><button class="btn btn-ghost" onclick="closeDrawer('couponDrawer')">Cancelar</button><button class="btn btn-accent" onclick="saveCoupon()">Guardar cupón</button></div>
+  </div>
+</div>
+
+<!-- Drawer Pedido -->
+<div class="drawer" id="orderDrawer">
+  <div class="drawer-back" onclick="closeDrawer('orderDrawer')"></div>
+  <div class="drawer-panel">
+    <div class="drawer-head"><strong>Detalle del pedido</strong><button class="btn btn-ghost" onclick="closeDrawer('orderDrawer')">✕</button></div>
+    <div class="drawer-body" id="orderDetail"></div>
+    <div class="drawer-foot" id="orderFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SEED_PRODUCTS = [
+  {id:0,name:'iPhone 15 Pro',brand:'Apple',cat:'celular',spec:'128 GB · Titanio · A17 Pro',price:1299000,was:1399000,badge:'Más vendido',stock:4, status:'activo', desc:'Cámara 48 MP y titanio.'},
+  {id:1,name:'Galaxy S24 Ultra',brand:'Samsung',cat:'celular',spec:'256 GB · Snapdragon 8 Gen 3',price:1399000,was:1599000,badge:'-12%',stock:12, status:'activo', desc:'Pantalla 6.8" 120Hz.'},
+  {id:2,name:'Pixel 8',brand:'Google',cat:'celular',spec:'128 GB · Tensor G3',price:899000,was:null,badge:null,stock:9, status:'activo', desc:'Android puro.'},
+  {id:3,name:'iPhone 15',brand:'Apple',cat:'celular',spec:'128 GB · A16 · USB-C',price:999000,was:null,badge:null,stock:18, status:'activo', desc:'El esencial.'},
+  {id:4,name:'Galaxy A54',brand:'Samsung',cat:'celular',spec:'128 GB · IP67',price:429000,was:499000,badge:'Cuotas',stock:3, status:'activo', desc:'Gama media.'},
+  {id:5,name:'Xiaomi 14',brand:'Xiaomi',cat:'celular',spec:'256 GB · Leica',price:749000,was:null,badge:'Nuevo',stock:7, status:'borrador', desc:'Leica y 90W.'},
+  {id:6,name:'WH-1000XM5',brand:'Sony',cat:'auricular',spec:'Over-ear · ANC · 30 h',price:389000,was:459000,badge:'-15%',stock:2, status:'activo', desc:'ANC líder.'},
+  {id:7,name:'AirPods Pro (2ª gen)',brand:'Apple',cat:'auricular',spec:'In-ear · H2 · ANC',price:329000,was:null,badge:null,stock:22, status:'activo', desc:'Audio espacial.'},
+  {id:8,name:'QuietComfort Ultra',brand:'Bose',cat:'auricular',spec:'Over-ear · 24 h',price:419000,was:479000,badge:'-12%',stock:6, status:'activo', desc:'Confort Bose.'},
+  {id:9,name:'Momentum 4',brand:'Sennheiser',cat:'auricular',spec:'Over-ear · 60 h',price:279000,was:null,badge:'60 h',stock:15, status:'activo', desc:'60h batería.'},
+  {id:10,name:'Nothing Phone (2)',brand:'Nothing',cat:'celular',spec:'128 GB · Glyph',price:599000,was:null,badge:null,stock:11, status:'activo', desc:'Transparente.'},
+  {id:11,name:'JBL Live 660NC',brand:'JBL',cat:'auricular',spec:'Over-ear · 50 h',price:119000,was:149000,badge:'Oferta',stock:28, status:'activo', desc:'Graves potentes.'},
+  {id:12,name:'Edge 40',brand:'Motorola',cat:'celular',spec:'256 GB · IP68',price:479000,was:null,badge:null,stock:5, status:'activo', desc:'Curvo.'},
+  {id:13,name:'WF-1000XM5',brand:'Sony',cat:'auricular',spec:'In-ear · 8 h',price:299000,was:null,badge:null,stock:14, status:'activo', desc:'In-ear premiado.'},
+  {id:14,name:'Galaxy Z Flip5',brand:'Samsung',cat:'celular',spec:'256 GB · Plegable',price:1099000,was:1299000,badge:'Plegable',stock:8, status:'activo', desc:'Plegable.'},
+  {id:15,name:'AirPods Max',brand:'Apple',cat:'auricular',spec:'Over-ear · 20 h',price:599000,was:null,badge:null,stock:9, status:'activo', desc:'Aluminio.'},
+];
+const SEED_ORDERS = [
+  {id:'#NODO-881204',date:'10 sep',customer:'Valentina García',email:'valen@mail.com',phone:'11 5555 8890',addr:'Av. Corrientes 1234, CABA',items:[{name:'iPhone 15 Pro',qty:1,price:1299000},{name:'AirPods Pro',qty:1,price:329000}],total:1628000,pay:'Mercadopago',status:'Pendiente'},
+  {id:'#NODO-881193',date:'09 sep',customer:'Martín López',email:'martin@mail.com',phone:'11 4444 2211',addr:'Palermo, CABA',items:[{name:'Galaxy S24 Ultra',qty:1,price:1399000}],total:1399000,pay:'Transferencia',status:'Pago confirmado'},
+  {id:'#NODO-881182',date:'09 sep',customer:'Lucía M.',email:'lucia@mail.com',phone:'11 3333 1122',addr:'Belgrano, CABA',items:[{name:'WH-1000XM5',qty:1,price:389000}],total:389000,pay:'Mercadopago',status:'Preparando'},
+  {id:'#NODO-881170',date:'08 sep',customer:'Sofía R.',email:'sofia@mail.com',phone:'11 2222 3344',addr:'La Plata',items:[{name:'Pixel 8',qty:1,price:899000},{name:'WF-1000XM5',qty:1,price:299000}],total:1198000,pay:'Mercadopago',status:'Enviado'},
+  {id:'#NODO-881155',date:'08 sep',customer:'Joaquín P.',email:'joaquin@mail.com',phone:'11 5555 6677',addr:'Rosario',items:[{name:'QuietComfort Ultra',qty:1,price:419000}],total:419000,pay:'Transferencia',status:'Entregado'},
+  {id:'#NODO-881140',date:'07 sep',customer:'Camila S.',email:'camila@mail.com',phone:'11 6666 7788',addr:'Córdoba',items:[{name:'Galaxy A54',qty:2,price:429000}],total:858000,pay:'Mercadopago',status:'Enviado'},
+  {id:'#NODO-881122',date:'07 sep',customer:'Tomás F.',email:'tomas@mail.com',phone:'11 7777 8899',addr:'Mendoza',items:[{name:'JBL Live 660NC',qty:1,price:119000}],total:119000,pay:'Mercadopago',status:'Cancelado'},
+  {id:'#NODO-881101',date:'06 sep',customer:'Agustina K.',email:'agus@mail.com',phone:'11 8888 9900',addr:'CABA',items:[{name:'iPhone 15',qty:1,price:999000}],total:999000,pay:'Mercadopago',status:'Pendiente'},
+];
+let PRODUCTS = JSON.parse(localStorage.getItem('nodo_admin_products')||'null') || JSON.parse(JSON.stringify(SEED_PRODUCTS));
+let ORDERS = JSON.parse(JSON.stringify(SEED_ORDERS));
+let customers = [
+  {name:'Valentina García',email:'valen@mail.com',phone:'11 5555 8890',orders:2,spent:2450000,last:'10 sep'},
+  {name:'Martín López',email:'martin@mail.com',phone:'11 4444 2211',orders:4,spent:3890000,last:'09 sep'},
+  {name:'Lucía M.',email:'lucia@mail.com',phone:'11 3333 1122',orders:1,spent:389000,last:'09 sep'},
+  {name:'Sofía R.',email:'sofia@mail.com',phone:'11 2222 3344',orders:3,spent:2100000,last:'08 sep'},
+  {name:'Joaquín P.',email:'joaquin@mail.com',phone:'11 5555 6677',orders:1,spent:419000,last:'08 sep'},
+];
+let coupons = [
+  {code:'NODO10', perc:10, min:199000, uses:87, max:200, exp:'2026-09-30', status:'activo'},
+  {code:'BIENVENIDA15', perc:15, min:299000, uses:34, max:100, exp:'2026-10-15', status:'activo'},
+  {code:'NODO20', perc:20, min:500000, uses:12, max:50, exp:'2026-08-31', status:'inactivo'},
+  {code:'AUDIO12', perc:12, min:150000, uses:21, max:80, exp:'2026-09-20', status:'activo'},
+];
+let returnsList = [
+  {id:'#R-2041', order:'#NODO-881140', customer:'Camila S.', reason:'No enciende', date:'09 sep', status:'Pendiente'},
+  {id:'#R-2039', order:'#NODO-881122', customer:'Tomás F.', reason:'Talle/color equivocado', date:'08 sep', status:'En revisión'},
+  {id:'#R-2035', order:'#NODO-881155', customer:'Joaquín P.', reason:'Arrepentimiento', date:'07 sep', status:'Aprobada'},
+];
+let editingCoupon=null;
+let prodPage=1, prodPerPage=8, prodBrand='all', prodSelected=new Set(), orderStatus='all', editingId=null;
+const fmt = n => '$' + n.toLocaleString('es-AR');
+function saveLocal(){ localStorage.setItem('nodo_admin_products', JSON.stringify(PRODUCTS)); localStorage.setItem('nodo_products_sync', JSON.stringify(PRODUCTS)); }
+function switchView(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('#sideNav a[data-view]').forEach(a=>a.classList.toggle('active', a.dataset.view===v));
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('newBtn').classList.toggle('hide', v!=='productos');
+  document.getElementById('newBtnAlt').classList.toggle('hide', v!=='productos');
+  if(v==='productos') renderProducts();
+  if(v==='pedidos') renderOrders();
+  if(v==='inventario') renderInventory();
+  if(v==='clientes') renderClients();
+  if(v==='cupones') renderCoupons();
+  if(v==='categorias') renderCategorias();
+  if(v==='devoluciones') renderReturns();
+  if(v==='banners') renderBanners();
+}
+function onGlobalSearch(q){
+  const v = q.toLowerCase().trim();
+  if(!v){ renderProducts(); renderOrders(); return; }
+  if(document.getElementById('view-productos').classList.contains('active')){
+    const filtered = PRODUCTS.filter(p=> (p.name+' '+p.brand).toLowerCase().includes(v));
+    renderProductsFiltered(filtered);
+  } else {
+    switchView('productos');
+    const filtered = PRODUCTS.filter(p=> (p.name+' '+p.brand).toLowerCase().includes(v));
+    setTimeout(()=>renderProductsFiltered(filtered),50);
+  }
+}
+function renderProductsFiltered(list){
+  const body=document.getElementById('prodBody');
+  body.innerHTML = list.map(p=> prodRow(p)).join('') || `<tr><td colspan="8" class="meta" style="text-align:center;padding:20px">Sin resultados para "${document.getElementById('globalSearch').value}"</td></tr>`;
+  document.getElementById('prodCount').textContent = list.length+' productos';
+}
+function statusClass(s){
+  const m={activo:'s-entregado',borrador:'s-cancelado'};
+  return m[s]||'s-cancelado';
+}
+function prodRow(p){
+  const off = p.was? Math.round((1-p.price/p.was)*100):0;
+  const dot = p.stock<5?'dot-red': p.stock<=10?'dot-amber':'dot-green';
+  return `<tr>
+    <td><input type="checkbox" ${prodSelected.has(p.id)?'checked':''} onchange="toggleSel(${p.id},this.checked)"/></td>
+    <td>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0">
+          ${p.cat==='celular'?'<svg width=16 height=16 viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.5"><rect x=7 y=2 width=10 height=20 rx=2/><circle cx=12 cy=18 r=1/></svg>':'<svg width=16 height=16 viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.5"><path d="M3 10c0-4 4-6 9-6s9 2 9 6v4c0 2-1 3-2 4l-7 4-7-4c-1-1-2-2-2-4v-4z"/></svg>'}
+        </div>
+        <div><div style="font-weight:600;font-size:13px">${p.name}</div><div class="meta" style="font-size:11px">${p.spec}</div></div>
+      </div>
+    </td>
+    <td class="meta" style="color:var(--fg)">${p.brand}</td>
+    <td><span class="tag">${p.cat==='celular'?'Celular':'Auricular'}</span></td>
+    <td class="num-col"><span class="num" style="font-weight:700">${fmt(p.price)}</span>${p.was?`<div class="meta" style="text-decoration:line-through">${fmt(p.was)} · -${off}%</div>`:''}</td>
+    <td class="num-col"><span style="display:inline-flex;align-items:center;gap:6px"><span class="stock-dot ${dot}"></span>${p.stock}</span></td>
+    <td><span class="status ${statusClass(p.status)}">${p.status}</span></td>
+    <td><div class="row" style="gap:4px"><button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Editar</button><button class="btn btn-ghost btn-sm" onclick="deleteProduct(${p.id})">⋯</button></div></td>
+  </tr>`;
+}
+function renderProducts(){
+  const cat=document.getElementById('prodCatFilter').value;
+  const st=document.getElementById('prodStatusFilter').value;
+  const sort=document.getElementById('prodSort').value;
+  let list = PRODUCTS.filter(p=>{
+    if(cat!=='all' && p.cat!==cat) return false;
+    if(st!=='all' && p.status!==st) return false;
+    if(prodBrand!=='all' && p.brand!==prodBrand) return false;
+    const q=document.getElementById('globalSearch').value.toLowerCase().trim();
+    if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  if(sort==='precioAsc') list.sort((a,b)=>a.price-b.price);
+  if(sort==='precioDesc') list.sort((a,b)=>b.price-a.price);
+  if(sort==='stock') list.sort((a,b)=>a.stock-b.stock);
+  const totalPages=Math.max(1, Math.ceil(list.length/prodPerPage));
+  prodPage=Math.min(prodPage,totalPages);
+  const pageList=list.slice((prodPage-1)*prodPerPage, prodPage*prodPerPage);
+  document.getElementById('prodBody').innerHTML = pageList.map(p=>prodRow(p)).join('') || `<tr><td colspan="8" class="meta" style="text-align:center;padding:24px">Sin productos con esos filtros</td></tr>`;
+  document.getElementById('prodCount').textContent = list.length+' productos';
+  document.getElementById('prodPagInfo').textContent = `Página ${prodPage} de ${totalPages}`;
+  document.getElementById('navProdCount').textContent = PRODUCTS.length;
+  // kpis
+  const low = PRODUCTS.filter(p=>p.stock<5).length;
+  document.getElementById('kpiStock').textContent=low;
+  document.getElementById('alertCount').textContent=low;
+  document.getElementById('invRed').textContent=low;
+  document.getElementById('invAmber').textContent=PRODUCTS.filter(p=>p.stock>=5&&p.stock<=10).length;
+  document.getElementById('invGreen').textContent=PRODUCTS.filter(p=>p.stock>10).length;
+}
+function filterBrandChip(el,brand){
+  document.querySelectorAll('#view-productos .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); prodBrand=brand; prodPage=1; renderProducts();
+}
+function toggleSel(id,checked){ if(checked) prodSelected.add(id); else prodSelected.delete(id); }
+function toggleSelAll(checked){
+  document.querySelectorAll('#prodBody input[type="checkbox"]').forEach(cb=>{
+    cb.checked=checked;
+    const id = PRODUCTS.slice((prodPage-1)*prodPerPage, prodPage*prodPerPage)[Array.from(cb.parentElement.parentElement.parentElement.children).indexOf(cb.parentElement.parentElement)]?.id;
+  });
+  // simpler: select all filtered
+  if(checked) PRODUCTS.forEach(p=>prodSelected.add(p.id)); else prodSelected.clear();
+  renderProducts();
+}
+function duplicateSelected(){
+  if(prodSelected.size===0){ showToast('Selecciona al menos un producto'); return; }
+  prodSelected.forEach(id=>{
+    const p=PRODUCTS.find(x=>x.id===id);
+    if(p){ const copy={...p, id: Math.max(...PRODUCTS.map(x=>x.id))+1, name:p.name+' (copia)', stock:0}; PRODUCTS.unshift(copy); }
+  });
+  prodSelected.clear(); saveLocal(); renderProducts(); showToast('Productos duplicados');
+}
+function deleteSelected(){
+  if(prodSelected.size===0){ showToast('Selecciona productos'); return; }
+  if(!confirm(`Eliminar ${prodSelected.size} productos?`)) return;
+  PRODUCTS = PRODUCTS.filter(p=>!prodSelected.has(p.id));
+  prodSelected.clear(); saveLocal(); renderProducts(); showToast('Productos eliminados');
+}
+function deleteProduct(id){
+  if(!confirm('¿Eliminar '+PRODUCTS.find(p=>p.id===id).name+'?')) return;
+  PRODUCTS=PRODUCTS.filter(p=>p.id!==id); saveLocal(); renderProducts(); showToast('Producto eliminado');
+}
+function openProductDrawer(){
+  editingId=null;
+  document.getElementById('prodDrawerTitle').textContent='Nuevo producto';
+  document.getElementById('fName').value=''; document.getElementById('fSpec').value=''; document.getElementById('fDesc').value=''; document.getElementById('fPrice').value=''; document.getElementById('fWas').value=''; document.getElementById('fStock').value='12'; document.getElementById('fBadge').value=''; document.getElementById('fStatus').value='activo';
+  document.getElementById('fName').classList.remove('err'); document.getElementById('fPrice').classList.remove('err');
+  openDrawer('prodDrawer');
+}
+function editProduct(id){
+  const p=PRODUCTS.find(x=>x.id===id); if(!p) return;
+  editingId=id;
+  document.getElementById('prodDrawerTitle').textContent='Editar · '+p.name;
+  document.getElementById('fName').value=p.name; document.getElementById('fBrand').value=p.brand; document.getElementById('fCat').value=p.cat; document.getElementById('fSpec').value=p.spec; document.getElementById('fDesc').value=p.desc||''; document.getElementById('fPrice').value=p.price; document.getElementById('fWas').value=p.was||''; document.getElementById('fStock').value=p.stock; document.getElementById('fBadge').value=p.badge||''; document.getElementById('fStatus').value=p.status;
+  openDrawer('prodDrawer');
+}
+function saveProduct(){
+  const name=document.getElementById('fName').value.trim();
+  const price=parseInt(document.getElementById('fPrice').value);
+  const stock=parseInt(document.getElementById('fStock').value);
+  let ok=true;
+  document.getElementById('fName').classList.toggle('err', !name); if(!name) ok=false;
+  document.getElementById('fPrice').classList.toggle('err', !price||price<=0); if(!price||price<=0) ok=false;
+  if(!ok){ showToast('Revisa los campos marcados'); return; }
+  const data={
+    name, brand: document.getElementById('fBrand').value, cat: document.getElementById('fCat').value, spec: document.getElementById('fSpec').value|| (document.getElementById('fCat').value==='celular'?'128 GB · Nuevo':'Over-ear · Nuevo'),
+    desc: document.getElementById('fDesc').value, price, was: parseInt(document.getElementById('fWas').value)||null, stock: isNaN(stock)?0:stock, badge: document.getElementById('fBadge').value||null, status: document.getElementById('fStatus').value
+  };
+  if(editingId!==null){
+    Object.assign(PRODUCTS.find(p=>p.id===editingId), data);
+    showToast('Producto actualizado');
+  } else {
+    const nid = PRODUCTS.length? Math.max(...PRODUCTS.map(p=>p.id))+1 : 0;
+    PRODUCTS.unshift({id:nid, ...data});
+    showToast('Producto creado');
+  }
+  saveLocal(); renderProducts(); renderInventory(); closeDrawer('prodDrawer');
+}
+// PEDIDOS
+function orderStatusClass(s){
+  const m={'Pendiente':'s-pendiente','Pago confirmado':'s-pago','Preparando':'s-preparando','Enviado':'s-enviado','Entregado':'s-entregado','Cancelado':'s-cancelado'};
+  return m[s]||'s-cancelado';
+}
+function renderOrders(){
+  let list = ORDERS.filter(o=>{
+    if(orderStatus!=='all' && o.status!==orderStatus) return false;
+    const q=document.getElementById('globalSearch').value.toLowerCase().trim();
+    if(q && !(o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const sort=document.getElementById('orderSort').value;
+  if(sort==='totalDesc') list.sort((a,b)=>b.total-a.total);
+  document.getElementById('orderBody').innerHTML = list.map(o=>`
+    <tr style="cursor:pointer" onclick="openOrder('${o.id}')">
+      <td class="num" style="font-weight:700">${o.id}</td>
+      <td><div style="font-weight:600;font-size:13px">${o.customer}</div><div class="meta" style="font-size:11px">${o.date}</div></td>
+      <td><span class="tag">${o.items.map(i=>i.name).join(' · ')}</span></td>
+      <td class="num-col num" style="font-weight:700">${fmt(o.total)}</td>
+      <td class="meta" style="color:var(--fg)">${o.pay}</td>
+      <td><span class="status ${orderStatusClass(o.status)}"><span class="status-dot" style="background:currentColor"></span>${o.status}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openOrder('${o.id}')">Ver</button></td>
+    </tr>
+  `).join('');
+  // recent
+  document.getElementById('recentBody').innerHTML = ORDERS.slice(0,4).map(o=>`
+    <tr><td class="num" style="font-weight:700">${o.id}</td><td>${o.customer}</td><td><span class="tag">${o.items[0].name}</span></td><td class="num-col num">${fmt(o.total)}</td><td><span class="status ${orderStatusClass(o.status)}" style="padding:3px 7px;font-size:10px">${o.status}</span></td><td><button class="btn btn-ghost btn-sm" onclick="openOrder('${o.id}')">Ver</button></td></tr>
+  `).join('');
+  document.getElementById('navOrderPending').textContent = ORDERS.filter(o=>o.status==='Pendiente').length;
+  document.getElementById('kpiPendientes').textContent = ORDERS.filter(o=>o.status==='Pendiente').length;
+  document.getElementById('kpiPago').textContent = ORDERS.filter(o=>o.status==='Pago confirmado').length;
+  document.getElementById('kpiPrep').textContent = ORDERS.filter(o=>o.status==='Preparando').length;
+}
+function filterOrderStatus(s,el){
+  document.querySelectorAll('#view-pedidos .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); orderStatus=s; renderOrders();
+}
+function openOrder(id){
+  const o=ORDERS.find(x=>x.id===id);
+  document.getElementById('orderDetail').innerHTML=`
+    <div class="row-between"><span class="num" style="font-weight:700">${o.id}</span><span class="status ${orderStatusClass(o.status)}">${o.status}</span></div>
+    <p class="meta" style="margin-top:4px">${o.date} · ${o.pay} · ${fmt(o.total)}</p>
+    <div class="card" style="margin-top:14px;padding:14px;background:var(--bg)">
+      <div style="font-weight:600;font-size:13px">${o.customer}</div>
+      <div class="meta" style="margin-top:4px">${o.email} · ${o.phone}</div>
+      <div class="meta">${o.addr}</div>
+    </div>
+    <div style="margin-top:14px"><h3 style="font-size:13px">Items</h3>
+      <div class="stack" style="gap:8px;margin-top:8px">
+        ${o.items.map(i=>`<div class="row-between" style="padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)"><span style="font-size:13px">${i.name} × ${i.qty}</span><span class="num" style="font-weight:700">${fmt(i.price*i.qty)}</span></div>`).join('')}
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <label class="meta" style="display:block;margin-bottom:6px">Cambiar estado</label>
+      <select class="select" id="orderStatusSel" onchange="changeOrderStatus('${o.id}',this.value)">
+        <option ${o.status==='Pendiente'?'selected':''}>Pendiente</option>
+        <option ${o.status==='Pago confirmado'?'selected':''}>Pago confirmado</option>
+        <option ${o.status==='Preparando'?'selected':''}>Preparando</option>
+        <option ${o.status==='Enviado'?'selected':''}>Enviado</option>
+        <option ${o.status==='Entregado'?'selected':''}>Entregado</option>
+        <option ${o.status==='Cancelado'?'selected':''}>Cancelado</option>
+      </select>
+      <p class="meta" style="margin-top:6px">Se notifica por mail (simulado) al cambiar estado.</p>
+    </div>
+    <div class="card" style="margin-top:14px;padding:12px"><div class="row-between"><span class="meta">Subtotal</span><span class="num">${fmt(o.total)}</span></div><div class="row-between"><span class="meta">Envío</span><span class="num" style="color:var(--accent)">Gratis</span></div><div class="rule" style="margin:8px 0"></div><div class="row-between"><strong>Total</strong><strong class="num">${fmt(o.total)}</strong></div></div>
+  `;
+  document.getElementById('orderFoot').innerHTML=`
+    <div class="row" style="gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="showToast('Remito impreso')">Imprimir remito</button>
+      <button class="btn btn-accent" style="flex:1" onclick="changeOrderStatus('${o.id}','Enviado');closeDrawer('orderDrawer')">Marcar enviado</button>
+    </div>
+  `;
+  openDrawer('orderDrawer');
+}
+function changeOrderStatus(id,status){
+  const o=ORDERS.find(x=>x.id===id); if(o){ o.status=status; renderOrders(); const sel=document.getElementById('orderStatusSel'); if(sel) sel.value=status; showToast('Pedido '+id+' → '+status); }
+}
+// INVENTARIO
+function renderInventory(){
+  const body=document.getElementById('invBody');
+  body.innerHTML = PRODUCTS.map(p=>{
+    const dot = p.stock<5?'dot-red': p.stock<=10?'dot-amber':'dot-green';
+    const min = p.stock<5?8:5;
+    return `<tr>
+      <td><div style="font-weight:600">${p.name}</div><div class="meta">${p.brand} · ${p.cat}</div></td>
+      <td class="num-col"><span style="display:inline-flex;align-items:center;gap:6px"><span class="stock-dot ${dot}"></span><span class="num" style="font-weight:700">${p.stock}</span></span></td>
+      <td class="num-col">${min}</td>
+      <td class="meta">A-0${(p.id%4)+1}</td>
+      <td><div class="row" style="gap:6px"><input class="input" style="width:72px;padding:6px 8px" type="number" value="${p.stock}" id="inv-${p.id}"/><button class="btn btn-secondary btn-sm" onclick="saveInv(${p.id})">Guardar</button><button class="btn btn-ghost btn-sm" onclick="reponer(${p.id})">Reponer</button></div></td>
+    </tr>`;
+  }).join('');
+}
+function saveInv(id){
+  const v=parseInt(document.getElementById('inv-'+id).value);
+  if(isNaN(v)||v<0){ showToast('Stock inválido'); return; }
+  PRODUCTS.find(p=>p.id===id).stock=v; saveLocal(); renderProducts(); renderInventory(); showToast('Stock actualizado');
+}
+function reponer(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const qty = parseInt(prompt('¿Cuántas unidades reponer para '+p.name+'?', '10'));
+  if(!qty) return;
+  p.stock+=qty; saveLocal(); renderInventory(); renderProducts(); showToast('Repuesto +'+qty+' · Stock: '+p.stock);
+}
+// CLIENTES
+function renderClients(){
+  document.getElementById('clientBody').innerHTML = customers.map(c=>`
+    <tr>
+      <td><div style="font-weight:600">${c.name}</div><div class="meta">${c.email}</div></td>
+      <td class="meta" style="color:var(--fg)">${c.phone}</td>
+      <td class="num-col num" style="font-weight:700">${c.orders}</td>
+      <td class="num-col num">${fmt(c.spent)}</td>
+      <td class="meta">${c.last}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="showToast('Historial de ${c.name}')">Ver</button></td>
+    </tr>
+  `).join('');
+}
+function renderCoupons(){
+  document.getElementById('couponBody').innerHTML = coupons.map(c=>`
+    <tr>
+      <td class="num" style="font-weight:700">${c.code}</td>
+      <td class="num-col num">${c.perc}%</td>
+      <td class="num-col">${fmt(c.min)}</td>
+      <td class="num-col">${c.uses}/${c.max}</td>
+      <td class="meta">${c.exp}</td>
+      <td><span class="status ${c.status==='activo'?'s-entregado':'s-cancelado'}" style="padding:3px 8px">${c.status}</span></td>
+      <td><div class="row" style="gap:4px"><button class="btn btn-ghost btn-sm" onclick="editCoupon('${c.code}')">Editar</button><button class="btn btn-ghost btn-sm" onclick="deleteCoupon('${c.code}')">Eliminar</button></div></td>
+    </tr>
+  `).join('');
+  document.getElementById('couponActive').textContent = coupons.filter(c=>c.status==='activo').length;
+}
+function openCouponDrawer(){ editingCoupon=null; document.getElementById('couponDrawerTitle').textContent='Nuevo cupón'; document.getElementById('cCode').value=''; document.getElementById('cPerc').value=10; document.getElementById('cMin').value=199000; document.getElementById('cActive').value='activo'; openDrawer('couponDrawer'); }
+function editCoupon(code){ const c=coupons.find(x=>x.code===code); editingCoupon=code; document.getElementById('couponDrawerTitle').textContent='Editar · '+code; document.getElementById('cCode').value=c.code; document.getElementById('cPerc').value=c.perc; document.getElementById('cMin').value=c.min; document.getElementById('cExp').value=c.exp; document.getElementById('cActive').value=c.status; document.getElementById('cUses').value=c.max; openDrawer('couponDrawer'); }
+function saveCoupon(){
+  const code=document.getElementById('cCode').value.trim().toUpperCase(); const perc=parseInt(document.getElementById('cPerc').value);
+  if(!code || !perc){ showToast('Código y descuento requeridos'); return; }
+  const data={code, perc, min:parseInt(document.getElementById('cMin').value)||0, uses:0, max:parseInt(document.getElementById('cUses').value)||100, exp:document.getElementById('cExp').value||'2026-12-31', status:document.getElementById('cActive').value};
+  if(editingCoupon){ Object.assign(coupons.find(x=>x.code===editingCoupon), data); if(code!==editingCoupon) coupons.find(x=>x.code===code).code=code; showToast('Cupón actualizado'); }
+  else { if(coupons.find(x=>x.code===code)){ showToast('Código ya existe'); return; } coupons.unshift({uses:0, ...data}); showToast('Cupón creado'); }
+  closeDrawer('couponDrawer'); renderCoupons();
+}
+function deleteCoupon(code){ if(!confirm('¿Eliminar '+code+'?')) return; coupons=coupons.filter(c=>c.code!==code); renderCoupons(); showToast('Cupón eliminado'); }
+function renderCategorias(){
+  const cats = [{name:'Celulares', count: PRODUCTS.filter(p=>p.cat==='celular').length, icon:'📱'}, {name:'Auriculares', count: PRODUCTS.filter(p=>p.cat==='auricular').length, icon:'🎧'}];
+  document.getElementById('catList').innerHTML = cats.map(cat=>`
+    <div class="row-between" style="padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg)">
+      <div class="row"><span style="width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center">${cat.icon}</span><div><div style="font-weight:600;font-size:13px">${cat.name}</div><div class="meta">${cat.count} productos</div></div></div>
+      <button class="btn btn-ghost btn-sm" onclick="showToast('Editar ${cat.name}')">Editar</button>
+    </div>
+  `).join('');
+  const brands = [...new Set(PRODUCTS.map(p=>p.brand))];
+  document.getElementById('brandList').innerHTML = brands.map(b=>`
+    <div class="row-between" style="padding:8px 10px;border:1px solid var(--border);border-radius:999px;background:var(--bg)">
+      <span style="font-weight:600;font-size:13px">${b}</span><span class="meta">${PRODUCTS.filter(p=>p.brand===b).length}</span>
+    </div>
+  `).join('');
+}
+function renderReturns(){
+  document.getElementById('returnBody').innerHTML = returnsList.map(r=>`
+    <tr>
+      <td class="num" style="font-weight:700">${r.id}</td>
+      <td class="num">${r.order}</td>
+      <td>${r.customer}</td>
+      <td class="meta" style="color:var(--fg)">${r.reason}</td>
+      <td><span class="status ${r.status==='Pendiente'?'s-pendiente':r.status==='En revisión'?'s-pago':'s-entregado'}" style="padding:3px 8px">${r.status}</span></td>
+      <td><div class="row" style="gap:4px"><button class="btn btn-ghost btn-sm" onclick="approveReturn('${r.id}')">Aprobar</button><button class="btn btn-ghost btn-sm" onclick="showToast('Rechazado ${r.id}')">Rechazar</button></div></td>
+    </tr>
+  `).join('');
+}
+function approveReturn(id){ const r=returnsList.find(x=>x.id===id); if(r){ r.status='Aprobada'; renderReturns(); showToast('Devolución '+id+' aprobada'); } }
+function renderBanners(){
+  const feats = PRODUCTS.slice(0,4);
+  document.getElementById('featuredEdit').innerHTML = feats.map(p=>`
+    <div class="row-between" style="padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--bg)">
+      <div class="row" style="gap:8px"><div style="width:28px;height:28px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center">${p.cat==='celular'?'📱':'🎧'}</div><div><div style="font-weight:600;font-size:13px">${p.name}</div><div class="meta">${p.brand}</div></div></div>
+      <select class="select" style="width:auto;padding:6px 8px;font-size:12px;border-radius:999px"><option>Destacado</option><option>Normal</option></select>
+    </div>
+  `).join('');
+}
+// settings
+function saveSettings(){
+  localStorage.setItem('nodo_settings_name', document.getElementById('setName').value);
+  localStorage.setItem('nodo_settings_free', document.getElementById('setFree').value);
+  showToast('Ajustes guardados');
+}
+function exportCSV(){
+  const header='id,nombre,marca,categoria,precio,stock,estado\n';
+  const rows=PRODUCTS.map(p=>[p.id,'"'+p.name+'"',p.brand,p.cat,p.price,p.stock,p.status].join(',')).join('\n');
+  const blob=new Blob([header+rows],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='nodo-productos.csv'; a.click(); URL.revokeObjectURL(url);
+  showToast('CSV descargado');
+}
+function resetDemo(){
+  if(!confirm('¿Reiniciar datos demo? Se perderán cambios.')) return;
+  localStorage.removeItem('nodo_admin_products');
+  PRODUCTS=JSON.parse(JSON.stringify(SEED_PRODUCTS)); saveLocal(); renderProducts(); renderInventory(); showToast('Demo reiniciada');
+}
+function onRole(v){
+  if(v==='soporte') showToast('Modo Soporte: solo lectura de pedidos');
+  else if(v==='stock') showToast('Modo Stock: puedes editar stock y pedidos');
+  else showToast('Modo Admin: acceso completo');
+}
+function openDrawer(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeDrawer(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
+}
+// init charts
+function initCharts(){
+  const vals=[62,84,58,96,78,110,92];
+  const max=Math.max(...vals);
+  document.getElementById('barChart').innerHTML = vals.map(v=>`<div class="bar ${v===110?'active':''}" style="height:${(v/max*100)}%" data-v="$${v}k"></div>`).join('');
+  const spark=[4,7,5,9,6,8,7,10];
+  const smax=Math.max(...spark);
+  document.getElementById('spark1').innerHTML = spark.map(v=>`<i style="height:${(v/smax*100)}%"></i>`).join('');
+  document.getElementById('alertsList').innerHTML = `
+    <div class="card" style="padding:12px;display:flex;gap:10px;align-items:center"><span class="stock-dot dot-red"></span><div style="flex:1"><div style="font-size:13px;font-weight:600">WH-1000XM5 con 2 unidades</div><div class="meta">Sony · Reponer esta semana</div></div><button class="btn btn-secondary btn-sm" onclick="switchView('inventario')">Reponer</button></div>
+    <div class="card" style="padding:12px;display:flex;gap:10px;align-items:center"><span class="stock-dot dot-red"></span><div style="flex:1"><div style="font-size:13px;font-weight:600">Galaxy A54 con 3 unidades</div><div class="meta">Samsung · Ventas +18%</div></div><button class="btn btn-secondary btn-sm" onclick="switchView('inventario')">Reponer</button></div>
+    <div class="card" style="padding:12px;display:flex;gap:10px;align-items:center;background:var(--bg)"><span class="pill">Nuevo pedido</span><div style="flex:1"><div style="font-size:13px;font-weight:600">#NODO-881204 pendiente</div><div class="meta">Valentina · $1.628.000</div></div><button class="btn btn-ghost btn-sm" onclick="openOrder('#NODO-881204')">Ver</button></div>
+  `;
+}
+initCharts(); renderProducts(); renderOrders(); renderInventory(); renderClients(); renderCoupons(); renderCategorias(); renderReturns(); renderBanners();
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ document.querySelectorAll('.drawer.open').forEach(d=>d.classList.remove('open')); document.body.style.overflow=''; }});
+</script>
+
+
+</body></html>

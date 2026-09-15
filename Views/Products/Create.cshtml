@@ -1,35 +1,122 @@
 @model EcommerceApp.Models.Product
-<h2>Crear Producto</h2>
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group mb-2">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+@{
+    ViewData["Title"] = "Crear Producto · NODO";
+}
+
+<section class="section" style="padding-top:20px;">
+<div class="container" style="max-width:760px;">
+    <div class="row-between" style="margin-bottom:20px;">
+        <div>
+            <p class="eyebrow">CATÁLOGO · PANEL ADMINISTRATIVO</p>
+            <h1 class="h2">Crear nuevo producto</h1>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">← Volver al catálogo</a>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
+
+    <div class="card" style="padding:28px 24px;border-radius:20px;">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="meta" style="color:#dc2626;margin-bottom:14px;"></div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Name">Nombre Comercial *</label>
+                    <input asp-for="Name" class="input" placeholder="Ej. iPhone 15 Pro" />
+                    <span asp-validation-for="Name" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Brand">Marca *</label>
+                    <input asp-for="Brand" class="input" placeholder="Apple, Samsung, Sony, Google..." />
+                    <span asp-validation-for="Brand" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Category">Categoría *</label>
+                    <select asp-for="Category" class="select">
+                        <option value="celular">Celular / Smartphone</option>
+                        <option value="auricular">Auricular / Audio</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Spec">Especificación Clave (Chips)</label>
+                    <input asp-for="Spec" class="input" placeholder="Ej. 128 GB · Titanio · A17 Pro · 6.1\"" />
+                    <span asp-validation-for="Spec" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label asp-for="Description">Descripción Detallada *</label>
+                <textarea asp-for="Description" class="textarea" placeholder="Explica las ventajas de uso, batería, cámara o sonido..."></textarea>
+                <span asp-validation-for="Description" class="meta" style="color:#dc2626;font-size:11px;"></span>
+            </div>
+
+            <div class="grid-3" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Price">Precio Actual ($ ARS) *</label>
+                    <input asp-for="Price" type="number" step="1" class="input" placeholder="1299000" />
+                    <span asp-validation-for="Price" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="WasPrice">Precio Anterior (Opcional)</label>
+                    <input asp-for="WasPrice" type="number" step="1" class="input" placeholder="1399000" />
+                    <span asp-validation-for="WasPrice" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Stock">Stock en Almacén *</label>
+                    <input asp-for="Stock" type="number" class="input" placeholder="15" />
+                    <span asp-validation-for="Stock" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+                <div class="field">
+                    <label asp-for="Badge">Etiqueta Badge</label>
+                    <input asp-for="Badge" class="input" placeholder="Más vendido, -15%, Nuevo, etc." />
+                    <span asp-validation-for="Badge" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="ImageUrl">URL de Imagen (Opcional)</label>
+                    <input asp-for="ImageUrl" type="url" class="input" placeholder="https://ejemplo.com/foto.jpg" />
+                    <span asp-validation-for="ImageUrl" class="meta" style="color:#dc2626;font-size:11px;"></span>
+                </div>
+            </div>
+
+            <div id="previewWrapper" style="display:none;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;margin-bottom:18px;">
+                <div class="meta" style="margin-bottom:6px;">Vista previa de imagen cargada:</div>
+                <img id="imagePreview" src="" alt="Vista previa" style="max-height:140px;object-fit:contain;" />
+            </div>
+
+            <div class="row" style="gap:10px;margin-top:10px;">
+                <button type="submit" class="btn btn-primary" style="padding:12px 24px;">Guardar producto en catálogo</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
     </div>
-    <div class="form-group mb-2">
-        <label asp-for="Price"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Stock"></label>
-        <input asp-for="Stock" class="form-control" />
-        <span asp-validation-for="Stock" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="ImageUrl"></label>
-        <input asp-for="ImageUrl" class="form-control" />
-    </div>
-    <div class="form-group mb-2">
-        <label asp-for="Category"></label>
-        <input asp-for="Category" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+</div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const imgInput = document.querySelector('input[name="ImageUrl"]');
+        const imgPreview = document.getElementById('imagePreview');
+        const previewWrap = document.getElementById('previewWrapper');
+        if (imgInput && imgPreview && previewWrap) {
+            imgInput.addEventListener('input', () => {
+                const url = imgInput.value.trim();
+                if (url) {
+                    imgPreview.src = url;
+                    previewWrap.style.display = 'block';
+                } else {
+                    previewWrap.style.display = 'none';
+                }
+            });
+        }
+    </script>
+}

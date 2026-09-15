@@ -1,14 +1,22 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using EcommerceApp.Data;
 using EcommerceApp.Models;
 
 namespace EcommerceApp.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ApplicationDbContext context) : Controller
 {
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var featured = await context.Products
+            .AsNoTracking()
+            .OrderByDescending(p => p.IsOffer)
+            .ThenByDescending(p => p.Price)
+            .Take(4)
+            .ToListAsync();
+        return View(featured);
     }
 
     public IActionResult Privacy()

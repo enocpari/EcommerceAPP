@@ -1,0 +1,75 @@
+@model List<EcommerceApp.Models.Product>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Control de Inventario";
+}
+
+<div style="max-width:1100px">
+    <div class="row-between" style="flex-wrap:wrap;margin-bottom:20px;">
+        <div>
+            <p class="eyebrow">LOGÍSTICA · ALMACÉN CENTRAL</p>
+            <h1 class="h1" style="font-size:26px;">Control de Inventario y Stock</h1>
+            <p class="meta" style="margin-top:4px;">Ajusta las cantidades disponibles para despacho inmediato</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="ds-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th class="num-col">Precio Unit.</th>
+                    <th>Nivel Actual</th>
+                    <th style="text-align:right;">Ajuste Rápido de Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong style="font-size:13.5px;">@item.Name</strong>
+                            <div class="meta" style="font-size:11px;">Marca: @(item.Brand ?? "NODO")</div>
+                        </td>
+                        <td>
+                            <span class="meta" style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;">
+                                @item.Category
+                            </span>
+                        </td>
+                        <td class="num-col">
+                            $@item.Price.ToString("N0", new System.Globalization.CultureInfo("es-AR"))
+                        </td>
+                        <td>
+                            @if (item.Stock > 5)
+                            {
+                                <span class="status s-entregado" style="font-size:10.5px;">
+                                    <span class="status-dot" style="background:#166534"></span>@item.Stock disponibles
+                                </span>
+                            }
+                            else if (item.Stock > 0)
+                            {
+                                <span class="status s-pendiente" style="font-size:10.5px;">
+                                    <span class="status-dot" style="background:#92400e"></span>Últimas @item.Stock unid.
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status s-cancelado" style="font-size:10.5px;">
+                                    <span class="status-dot" style="background:#dc2626"></span>Agotado (0)
+                                </span>
+                            }
+                        </td>
+                        <td style="text-align:right;">
+                            <form asp-action="UpdateStock" method="post" style="display:inline-flex;align-items:center;gap:6px;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="number" name="stock" value="@item.Stock" min="0" max="9999" class="input" style="width:72px;padding:5px 8px;font-size:12.5px;text-align:center;" />
+                                <button type="submit" class="btn btn-secondary btn-sm" style="padding:5px 10px;font-size:12px;">Guardar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

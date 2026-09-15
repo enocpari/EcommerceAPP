@@ -1,0 +1,152 @@
+@model EcommerceApp.Models.Order
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = $"Editar Pedido #{Model.OrderNumber}";
+}
+
+<div style="max-width:860px;margin:0 auto;">
+    <div class="row-between" style="flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+        <div>
+            <div class="row" style="gap:8px;align-items:center;margin-bottom:6px;">
+                <a asp-action="OrderDetail" asp-route-id="@Model.Id" class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:12px;">← Volver al Detalle</a>
+                <span class="meta">/</span>
+                <span class="meta" style="font-family:var(--font-mono);">Editar #@Model.OrderNumber</span>
+            </div>
+            <h1 class="h1" style="font-size:26px;margin:0;">Editar Pedido #@Model.OrderNumber</h1>
+            <p class="meta" style="margin-top:4px;">Modifica los datos del comprador, destino de entrega o estado de la orden</p>
+        </div>
+        <div>
+            <a asp-action="OrderDetail" asp-route-id="@Model.Id" class="btn btn-ghost btn-sm">Cancelar</a>
+        </div>
+    </div>
+
+    <form asp-action="EditOrder" method="post" class="card" style="padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="OrderNumber" />
+
+        <div asp-validation-summary="ModelOnly" style="color:#ef4444;margin-bottom:18px;font-size:13px;"></div>
+
+        <!-- Sección 1: Estado y Logística -->
+        <div style="margin-bottom:28px;">
+            <p class="eyebrow" style="margin-bottom:6px;">GESTIÓN LOGÍSTICA</p>
+            <h3 class="h3" style="font-size:16px;margin-bottom:16px;">Estado del Pedido y Envío</h3>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;">
+                <div>
+                    <label asp-for="Status" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Estado del Pedido</label>
+                    <select asp-for="Status" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Pago Acreditado">Pago Acreditado</option>
+                        <option value="En preparación">En preparación</option>
+                        <option value="En camino">En camino</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="TrackingNumber" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Código de Seguimiento / Guía</label>
+                    <input asp-for="TrackingNumber" placeholder="Ej: TRK-8823901" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;font-family:var(--font-mono);" />
+                </div>
+
+                <div>
+                    <label asp-for="ShippingMethod" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Método de Envío</label>
+                    <input asp-for="ShippingMethod" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                </div>
+
+                <div>
+                    <label asp-for="PaymentMethod" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Método de Pago</label>
+                    <input asp-for="PaymentMethod" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                </div>
+
+                <div>
+                    <label asp-for="PaymentReference" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Comprobante / N° de Transacción</label>
+                    <input asp-for="PaymentReference" placeholder="Ej: TRX-9402 o ID bancario" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;font-family:var(--font-mono);" />
+                </div>
+
+                <div style="grid-column: 1 / -1;">
+                    <label asp-for="AdminNotes" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Notas Administrativas / Auditoría Interna</label>
+                    <textarea asp-for="AdminNotes" rows="2" placeholder="Notas internas del operador, verificación bancaria, incidencias..." class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;" />
+
+        <!-- Sección 2: Datos del Cliente -->
+        <div style="margin-bottom:28px;">
+            <p class="eyebrow" style="margin-bottom:6px;">CLIENTE Y FACTURACIÓN</p>
+            <h3 class="h3" style="font-size:16px;margin-bottom:16px;">Datos del Comprador</h3>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;">
+                <div>
+                    <label asp-for="CustomerName" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Nombre Completo *</label>
+                    <input asp-for="CustomerName" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="CustomerName" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DocumentId" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Carnet de Identidad / DNI *</label>
+                    <input asp-for="DocumentId" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;font-family:var(--font-mono);" />
+                    <span asp-validation-for="DocumentId" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Phone" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Teléfono / WhatsApp *</label>
+                    <input asp-for="Phone" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="Phone" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Email" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Correo Electrónico *</label>
+                    <input asp-for="Email" type="email" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="Email" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;" />
+
+        <!-- Sección 3: Destino y Ubicación -->
+        <div style="margin-bottom:28px;">
+            <p class="eyebrow" style="margin-bottom:6px;">DESTINO</p>
+            <h3 class="h3" style="font-size:16px;margin-bottom:16px;">Ubicación de Entrega</h3>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:16px;">
+                <div style="grid-column: 1 / -1;">
+                    <label asp-for="Address" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Dirección de Entrega (Calle, Número, Piso/Depto) *</label>
+                    <input asp-for="Address" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="Address" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="City" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Ciudad / Municipio *</label>
+                    <input asp-for="City" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="City" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Province" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Provincia / Departamento *</label>
+                    <input asp-for="Province" required class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                    <span asp-validation-for="Province" style="color:#ef4444;font-size:12px;"></span>
+                </div>
+
+                <div>
+                    <label asp-for="PostalCode" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Código Postal</label>
+                    <input asp-for="PostalCode" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Notes" class="form-label" style="font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;">Instrucciones / Notas de Entrega</label>
+                <textarea asp-for="Notes" rows="2" class="form-control" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;"></textarea>
+            </div>
+        </div>
+
+        <div class="row-between" style="gap:12px;padding-top:16px;border-top:1px solid var(--border);">
+            <a asp-action="OrderDetail" asp-route-id="@Model.Id" class="btn btn-ghost">Cancelar</a>
+            <button type="submit" class="btn btn-accent" style="padding:12px 24px;">Guardar Cambios</button>
+        </div>
+    </form>
+</div>

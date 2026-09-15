@@ -1,0 +1,402 @@
+@model EcommerceApp.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Finalizar Compra · NODO";
+}
+
+<div class="container" style="max-width:1160px;padding:32px 16px 64px;">
+    <!-- Breadcrumb / Header -->
+    <div style="margin-bottom:28px;">
+        <p class="eyebrow" style="color:var(--accent);margin-bottom:6px;">CHECKOUT SEGURO · PASO FINAL</p>
+        <h1 class="h1" style="font-size:28px;letter-spacing:-0.02em;margin:0 0 8px;">Finalizar Pedido y Datos de Envío</h1>
+        <p class="meta" style="font-size:14px;max-width:600px;">
+            Completa tus datos personales, documento de identidad y lugar de entrega para procesar tu orden inmediatamente.
+        </p>
+    </div>
+
+    <!-- Empty Cart Warning (if no items in localStorage) -->
+    <div id="checkoutEmptyCart" style="display:none;background:var(--surface);border:1px dashed var(--border);border-radius:20px;padding:48px 24px;text-align:center;max-width:600px;margin:32px auto;">
+        <div style="font-size:48px;margin-bottom:12px;">🛒</div>
+        <h2 class="h2" style="font-size:20px;margin-bottom:8px;">Tu carrito de compras está vacío</h2>
+        <p class="meta" style="margin-bottom:20px;">No has agregado ningún producto para realizar un pedido.</p>
+        <a href="/Products" class="btn btn-accent" style="padding:12px 24px;">Explorar Catálogo NODO</a>
+    </div>
+
+    <!-- Checkout Main Content -->
+    <div id="checkoutMainLayout" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:32px;align-items:start;">
+        
+        <!-- Left: Customer Form -->
+        <form asp-action="Create" method="post" id="checkoutForm" class="stack" style="gap:24px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ItemsJson" id="itemsJsonField" />
+
+            <div asp-validation-summary="All" class="validation-summary" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;padding:14px 18px;border-radius:12px;font-size:13px;display:none;" id="formErrors"></div>
+
+            <!-- Card 1: Datos Personales & Documento de Identidad -->
+            <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;">1</div>
+                    <h2 class="h2" style="font-size:17px;margin:0;">Datos Personales y Documento</h2>
+                </div>
+
+                <div class="stack" style="gap:16px;">
+                    <div>
+                        <label asp-for="CustomerName" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Nombre y Apellido Completo *</label>
+                        <input asp-for="CustomerName" required placeholder="Ej: Camila Morales Gómez" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                        <span asp-validation-for="CustomerName" style="color:#ef4444;font-size:12px;"></span>
+                    </div>
+
+                    <!-- Highlighted Document ID field -->
+                    <div>
+                        <label asp-for="DocumentId" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">
+                            Carnet de Identidad / DNI / Pasaporte *
+                        </label>
+                        <div style="position:relative;">
+                            <input asp-for="DocumentId" required placeholder="Ej: 10482914 o DNI" class="form-control" style="width:100%;padding:11px 14px;border:1.5px solid var(--accent);border-radius:10px;background:var(--bg);font-size:14px;font-family:var(--font-mono);font-weight:600;" />
+                        </div>
+                        <p class="meta" style="font-size:11px;margin-top:4px;">Requerido para la emisión del comprobante y retiro o recepción del paquete.</p>
+                        <span asp-validation-for="DocumentId" style="color:#ef4444;font-size:12px;"></span>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;">
+                        <div>
+                            <label asp-for="Phone" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Teléfono / WhatsApp *</label>
+                            <input asp-for="Phone" required type="tel" placeholder="Ej: +54 9 11 4829-1029" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                            <span asp-validation-for="Phone" style="color:#ef4444;font-size:12px;"></span>
+                        </div>
+                        <div>
+                            <label asp-for="Email" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Correo Electrónico *</label>
+                            <input asp-for="Email" required type="email" placeholder="nombre@ejemplo.com" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                            <span asp-validation-for="Email" style="color:#ef4444;font-size:12px;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Dirección y Ubicación de Entrega -->
+            <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;">2</div>
+                    <h2 class="h2" style="font-size:17px;margin:0;">Dirección y Ubicación de Entrega</h2>
+                </div>
+
+                <div class="stack" style="gap:16px;">
+                    <div>
+                        <label asp-for="Address" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Dirección de Entrega (Calle, Número, Piso/Depto) *</label>
+                        <input asp-for="Address" required placeholder="Ej: Av. Santa Fe 3200, Piso 4 Depto B" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                        <span asp-validation-for="Address" style="color:#ef4444;font-size:12px;"></span>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;">
+                        <div>
+                            <label asp-for="City" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Ciudad / Municipio *</label>
+                            <input asp-for="City" required placeholder="Ej: Palermo / CABA" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                            <span asp-validation-for="City" style="color:#ef4444;font-size:12px;"></span>
+                        </div>
+                        <div>
+                            <label asp-for="Province" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Departamento / Provincia *</label>
+                            <input asp-for="Province" required placeholder="Ej: Buenos Aires / La Paz" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                            <span asp-validation-for="Province" style="color:#ef4444;font-size:12px;"></span>
+                        </div>
+                        <div>
+                            <label asp-for="PostalCode" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Código Postal</label>
+                            <input asp-for="PostalCode" placeholder="Ej: 1425" class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label asp-for="Notes" class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Indicaciones adicionales para la entrega</label>
+                        <textarea asp-for="Notes" rows="2" placeholder="Ej: Timbre 4B, dejar en recepción con guardia, horario de tarde..." class="form-control" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13.5px;"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Método de Envío y Pago -->
+            <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;">3</div>
+                    <h2 class="h2" style="font-size:17px;margin:0;">Modalidad de Entrega y Pago</h2>
+                </div>
+
+                <div class="stack" style="gap:20px;">
+                    <!-- Método de Envío -->
+                    <div>
+                        <label class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Selecciona la forma de entrega</label>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:10px;">
+                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                                <input type="radio" asp-for="ShippingMethod" value="Envío Express a Domicilio" checked style="margin-top:3px;" />
+                                <div>
+                                    <strong style="font-size:13.5px;display:block;">Envío Express a Domicilio</strong>
+                                    <span class="meta" style="font-size:12px;">Entrega en 24h · Bonificado $0</span>
+                                </div>
+                            </label>
+                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                                <input type="radio" asp-for="ShippingMethod" value="Retiro en Sucursal Central" style="margin-top:3px;" />
+                                <div>
+                                    <strong style="font-size:13.5px;display:block;">Retiro en Tienda Central</strong>
+                                    <span class="meta" style="font-size:12px;">Disponible hoy mismo</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Método de Pago Interactivo -->
+                    <div>
+                        <label class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Selecciona el método de pago</label>
+                        <div class="stack" style="gap:10px;">
+                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                                <input type="radio" asp-for="PaymentMethod" value="QR Simple" checked style="margin-top:3px;" onchange="updatePaymentView()" />
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                                        <strong style="font-size:13.5px;">QR Simple / Pago Móvil Inmediato</strong>
+                                        <span class="tag" style="background:#16a34a;color:#fff;font-size:10px;">RECOMENDADO</span>
+                                    </div>
+                                    <span class="meta" style="font-size:12px;display:block;margin-top:2px;">Escanea con Mercado Pago, Modo, BNA+, Cuenta DNI o la app de cualquier banco.</span>
+                                </div>
+                            </label>
+
+                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                                <input type="radio" asp-for="PaymentMethod" value="Transferencia Bancaria" style="margin-top:3px;" onchange="updatePaymentView()" />
+                                <div>
+                                    <strong style="font-size:13.5px;display:block;">Transferencia Bancaria Directa</strong>
+                                    <span class="meta" style="font-size:12px;">Transfiere desde tu home banking y registra el número de comprobante.</span>
+                                </div>
+                            </label>
+
+                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                                <input type="radio" asp-for="PaymentMethod" value="Efectivo contra entrega" style="margin-top:3px;" onchange="updatePaymentView()" />
+                                <div>
+                                    <strong style="font-size:13.5px;display:block;">Pago en Efectivo contra entrega</strong>
+                                    <span class="meta" style="font-size:12px;">Paga al recibir el producto en tu domicilio o al retirar en tienda.</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Dynamic Panel: QR Simple -->
+                        <div id="panelPaymentQR" style="margin-top:16px;background:var(--bg);border:1.5px solid var(--accent);border-radius:14px;padding:18px;display:block;">
+                            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                                <div style="width:110px;height:110px;background:#fff;border-radius:10px;padding:8px;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+                                    <svg viewBox="0 0 100 100" width="94" height="94">
+                                        <rect width="100" height="100" fill="#ffffff"/>
+                                        <path d="M10,10 h30 v30 h-30 z M15,15 v20 h20 v-20 z M20,20 h10 v10 h-10 z" fill="#0f172a"/>
+                                        <path d="M60,10 h30 v30 h-30 z M65,15 v20 h20 v-20 z M70,20 h10 v10 h-10 z" fill="#0f172a"/>
+                                        <path d="M10,60 h30 v30 h-30 z M15,65 v20 h20 v-20 z M20,70 h10 v10 h-10 z" fill="#0f172a"/>
+                                        <rect x="45" y="10" width="8" height="25" fill="#0f172a"/>
+                                        <rect x="45" y="45" width="25" height="8" fill="#0f172a"/>
+                                        <rect x="60" y="60" width="12" height="12" fill="#0f172a"/>
+                                        <rect x="75" y="75" width="15" height="15" fill="#0f172a"/>
+                                        <rect x="50" y="75" width="8" height="15" fill="#0f172a"/>
+                                        <rect x="75" y="50" width="15" height="8" fill="#0f172a"/>
+                                        <circle cx="50" cy="50" r="7" fill="var(--accent)"/>
+                                    </svg>
+                                </div>
+                                <div style="flex:1;min-width:200px;">
+                                    <div style="font-weight:700;font-size:14px;color:var(--accent);margin-bottom:4px;">Escaneo Rápido de Pago NODO</div>
+                                    <p class="meta" style="font-size:12px;margin-bottom:8px;">
+                                        Abre tu app bancaria o billetera digital favorita y escanea el código. Tu comprobante oficial y token se generarán automáticamente.
+                                    </p>
+                                    <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--muted);">
+                                        Temporizador de sesión de pago: <span id="qrTimer" style="color:var(--accent);font-weight:700;">09:59</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Panel: Transferencia Bancaria -->
+                        <div id="panelPaymentTransfer" style="margin-top:16px;background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:18px;display:none;">
+                            <div style="font-weight:700;font-size:13.5px;margin-bottom:10px;">Datos de la Cuenta Oficial NODO:</div>
+                            <div style="font-size:12.5px;display:grid;gap:6px;background:var(--surface);padding:12px;border-radius:10px;margin-bottom:14px;">
+                                <div><span class="meta">Banco:</span> <strong>Banco Industrial / Santander</strong></div>
+                                <div><span class="meta">Titular:</span> <strong>NODO TECNOLOGIA S.A.</strong></div>
+                                <div><span class="meta">Alias CBU:</span> <strong style="font-family:var(--font-mono);color:var(--accent);">NODO.OFICIAL.TECH</strong></div>
+                                <div><span class="meta">CVU/CBU:</span> <span style="font-family:var(--font-mono);">0000003100019283746501</span></div>
+                            </div>
+                            <div>
+                                <label asp-for="PaymentReference" class="form-label" style="display:block;font-size:12.5px;font-weight:600;margin-bottom:4px;">
+                                    Número de Comprobante / Transacción (opcional al crear)
+                                </label>
+                                <input asp-for="PaymentReference" placeholder="Ej: TRX-84920194 o N° de operación bancaria" class="form-control" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-size:13px;" />
+                                <span class="meta" style="font-size:11px;display:block;margin-top:3px;">Podrás ingresar o actualizar tu comprobante en cualquier momento con tu Token.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Alert Box for Stock / Consistency Issues -->
+            <div id="checkoutStockBanner" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;padding:14px 18px;border-radius:14px;font-size:13px;">
+                <div style="font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Aviso de Inventario y Disponibilidad
+                </div>
+                <div id="checkoutStockBannerList" class="stack" style="gap:4px;"></div>
+            </div>
+
+            <!-- Submit Button (Mobile & Desktop) -->
+            <button type="submit" id="btnSubmitOrder" class="btn btn-accent" style="width:100%;padding:16px 24px;font-size:16px;font-weight:700;letter-spacing:0.02em;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,0.25);">
+                Confirmar y Registrar Pedido 🛍️
+            </button>
+            <p class="meta" style="text-align:center;font-size:12px;">
+                🔒 Tus datos están protegidos. Al confirmar el pedido, recibirás un recibo formal y un token de transacción auditado.
+            </p>
+        </form>
+
+        <!-- Right: Order Summary (populated from Cart items) -->
+        <div class="card" style="padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--surface);position:sticky;top:20px;">
+            <div class="row-between" style="margin-bottom:16px;align-items:center;">
+                <h2 class="h2" style="font-size:17px;margin:0;">Resumen del Carrito</h2>
+                <span id="cartCountBadge" class="tag" style="font-size:11px;">0 artículos</span>
+            </div>
+
+            <!-- Items List Container -->
+            <div id="checkoutCartItemsList" class="stack" style="gap:14px;max-height:360px;overflow-y:auto;padding-right:6px;margin-bottom:20px;">
+                <!-- Filled dynamically by JavaScript -->
+            </div>
+
+            <!-- Totals calculation -->
+            <div style="border-top:1px solid var(--border);padding-top:16px;" class="stack" style="gap:8px;">
+                <div class="row-between" style="font-size:13.5px;">
+                    <span class="meta">Subtotal de artículos:</span>
+                    <span id="checkoutSubtotalText" style="font-family:var(--font-mono);font-weight:600;">$0</span>
+                </div>
+                <div class="row-between" style="font-size:13.5px;">
+                    <span class="meta">Costo de entrega:</span>
+                    <span style="font-family:var(--font-mono);color:#16a34a;font-weight:600;">¡GRATIS!</span>
+                </div>
+                <div class="row-between" style="padding-top:14px;border-top:2px solid var(--border);font-size:18px;font-weight:700;">
+                    <span>Total a pagar:</span>
+                    <span id="checkoutTotalText" style="font-family:var(--font-mono);color:var(--accent);">$0</span>
+                </div>
+            </div>
+
+            <div style="margin-top:20px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:20px;">🛡️</span>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.4;">
+                    Garantía oficial NODO de 12 meses en todos los dispositivos y soporte técnico postventa.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updatePaymentView() {
+            var methodEl = document.querySelector('input[name="PaymentMethod"]:checked');
+            var val = methodEl ? methodEl.value : '';
+            var panelQR = document.getElementById('panelPaymentQR');
+            var panelTransfer = document.getElementById('panelPaymentTransfer');
+
+            if (val.includes('QR')) {
+                if (panelQR) panelQR.style.display = 'block';
+                if (panelTransfer) panelTransfer.style.display = 'none';
+            } else if (val.includes('Transferencia')) {
+                if (panelQR) panelQR.style.display = 'none';
+                if (panelTransfer) panelTransfer.style.display = 'block';
+            } else {
+                if (panelQR) panelQR.style.display = 'none';
+                if (panelTransfer) panelTransfer.style.display = 'none';
+            }
+        }
+
+        // Timer for QR demonstration
+        (function() {
+            var timeLeft = 600;
+            var timerEl = document.getElementById('qrTimer');
+            if (!timerEl) return;
+            setInterval(function() {
+                if (timeLeft <= 0) return;
+                timeLeft--;
+                var m = Math.floor(timeLeft / 60);
+                var s = timeLeft % 60;
+                timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+            }, 1000);
+        })();
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            var rawCart = localStorage.getItem('nodo_cart_items');
+            var cart = [];
+            try {
+                if (rawCart) cart = JSON.parse(rawCart);
+            } catch(e) {
+                cart = [];
+            }
+
+            var emptyLayout = document.getElementById('checkoutEmptyCart');
+            var mainLayout = document.getElementById('checkoutMainLayout');
+            var itemsContainer = document.getElementById('checkoutCartItemsList');
+            var itemsJsonField = document.getElementById('itemsJsonField');
+            var countBadge = document.getElementById('cartCountBadge');
+            var subtotalText = document.getElementById('checkoutSubtotalText');
+            var totalText = document.getElementById('checkoutTotalText');
+            var stockBanner = document.getElementById('checkoutStockBanner');
+            var stockList = document.getElementById('checkoutStockBannerList');
+            var btn = document.getElementById('btnSubmitOrder');
+
+            if (!cart || cart.length === 0) {
+                if (emptyLayout) emptyLayout.style.display = 'block';
+                if (mainLayout) mainLayout.style.display = 'none';
+                return;
+            }
+
+            // Validar stock y precios en vivo con Supabase a través del endpoint /Orders/ValidateCart
+            var validationResult = null;
+            if (window.NodoCart && typeof window.NodoCart.validate === 'function') {
+                validationResult = await window.NodoCart.validate();
+            }
+
+            if (validationResult && !validationResult.allInStock && validationResult.alerts && validationResult.alerts.length > 0) {
+                if (stockBanner && stockList) {
+                    stockBanner.style.display = 'block';
+                    stockList.innerHTML = validationResult.alerts.map(a => `<div>• ${a}</div>`).join('');
+                }
+            }
+
+            // Sync hidden form field with actual items
+            itemsJsonField.value = JSON.stringify(cart);
+            countBadge.innerText = cart.length + (cart.length === 1 ? ' artículo' : ' artículos');
+
+            var subtotal = 0;
+            var html = '';
+
+            cart.forEach(function(item) {
+                var qty = item.qty || 1;
+                var itemTotal = item.price * qty;
+                subtotal += itemTotal;
+
+                html += `
+                    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <div style="width:46px;height:46px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex-shrink:0;">
+                            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" style="max-height:100%;max-width:100%;object-fit:contain;" />` : '<span style="font-size:20px;">📱</span>'}
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+                            <div class="meta" style="font-size:11px;">Cant: ${qty} × $${Number(item.price).toLocaleString('es-AR')}</div>
+                        </div>
+                        <div style="font-family:var(--font-mono);font-weight:700;font-size:13px;white-space:nowrap;">
+                            $${Number(itemTotal).toLocaleString('es-AR')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            itemsContainer.innerHTML = html;
+            subtotalText.innerText = '$' + Number(subtotal).toLocaleString('es-AR');
+            totalText.innerText = '$' + Number(subtotal).toLocaleString('es-AR');
+
+            // Intercept form submission to guarantee itemsJson is fresh & provide smooth UX
+            var form = document.getElementById('checkoutForm');
+
+            form.addEventListener('submit', function(e) {
+                if (!cart || cart.length === 0) {
+                    e.preventDefault();
+                    alert('El carrito no contiene productos.');
+                    return;
+                }
+                itemsJsonField.value = JSON.stringify(cart);
+                btn.disabled = true;
+                btn.innerText = 'Procesando tu pedido de forma segura... ⏳';
+            });
+        });
+    </script>
+}
