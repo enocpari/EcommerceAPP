@@ -7,7 +7,6 @@ namespace EcommerceApp.Services
         public string BrandName { get; set; } = "NOVA";
         public string LogoInitial { get; set; } = "N";
         public string Tagline { get; set; } = "Celulares · Audio High-End";
-        public string Announcement { get; set; } = "🔥 Envíos gratis a todo el país en compras superiores a $199.000 · 12 cuotas sin interés";
         public string SupportPhone { get; set; } = "+54 11 4500-8000";
         public string SupportEmail { get; set; } = "contacto@novastore.com";
         public decimal FreeShippingThreshold { get; set; } = 199000;

@@ -10,14 +10,6 @@
     <link rel="stylesheet" href="~/EcommerceApp.styles.css" asp-append-version="true" />
 </head>
 <body>
-    @if (!string.IsNullOrWhiteSpace(StoreConfig.GetSettings().Announcement))
-    {
-        <div class="announcement-bar">
-            <div class="container" style="display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;">
-                <span>@StoreConfig.GetSettings().Announcement</span>
-            </div>
-        </div>
-    }
     <header class="topnav">
         <div class="container topnav-inner">
             <!-- LOGO -->
