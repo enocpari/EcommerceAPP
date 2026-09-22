@@ -50,7 +50,7 @@ namespace EcommerceApp.Controllers
 
             if (!string.IsNullOrWhiteSpace(category) && category != "all")
             {
-                query = query.Where(p => (p.Category ?? "").ToLower().Contains(category.ToLower()));
+                query = query.Where(p => (p.Category != null && p.Category.Name.ToLower().Contains(category.ToLower())) || (p.CategoryName ?? "").ToLower().Contains(category.ToLower()));
             }
 
             if (!string.IsNullOrWhiteSpace(search))

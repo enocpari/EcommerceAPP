@@ -23,7 +23,12 @@ namespace EcommerceApp.Models
         [Display(Name = "Enlace de la imagen")]
         [MaxLength(2048)]
         public string? ImageUrl { get; set; }
-        public string? Category { get; set; }
+
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
+
+        [MaxLength(50)]
+        public string? CategoryName { get; set; }
 
         // NODO extensions (nullable para no romper datos existentes)
         [MaxLength(50)]

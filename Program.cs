@@ -5,8 +5,12 @@ using EcommerceApp.Data;
 using EcommerceApp.Models;
 
 using EcommerceApp.Services;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar licencia QuestPDF (gratuita para uso educativo/opensource)
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Compatibilidad de puerto dinámico para Render / Docker
 var port = Environment.GetEnvironmentVariable("PORT");
@@ -16,6 +20,7 @@ if (!string.IsNullOrEmpty(port))
 }
 
 builder.Services.AddSingleton<StoreConfigService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

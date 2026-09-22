@@ -1,7 +1,7 @@
 @model EcommerceApp.Models.Product
 @{
     ViewData["Title"] = $"{Model.Name} — Ficha Técnica";
-    var isCel = (Model.Category ?? "").ToLower().Contains("celular");
+    var isCel = (Model.Category?.Name ?? Model.CategoryName ?? "").ToLower().Contains("celular");
     var discount = Model.WasPrice.HasValue && Model.WasPrice > Model.Price
         ? Math.Round((1 - Model.Price / Model.WasPrice.Value) * 100)
         : 0;
@@ -102,7 +102,7 @@
                         data-name="@Model.Name" 
                         data-price="@Model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
                         data-brand="@(Model.Brand ?? "")" 
-                        data-category="@(Model.Category ?? "")" 
+                        data-category="@(Model.Category?.Name ?? Model.CategoryName ?? "")" 
                         data-spec="@(Model.Spec ?? "")" 
                         data-image="@(Model.ImageUrl ?? "")"
                         onclick="window.NodoCart.addFromButton(this)">

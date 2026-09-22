@@ -102,13 +102,13 @@
             {
                 foreach (var p in Model)
                 {
-                    var isCel = (p.Category ?? "").ToLower().Contains("celular");
+                    var isCel = (p.Category?.Name ?? p.CategoryName ?? "").ToLower().Contains("celular");
                     var discount = p.WasPrice.HasValue && p.WasPrice > p.Price
                         ? Math.Round((1 - p.Price / p.WasPrice.Value) * 100)
                         : 0;
 
                     <article class="p-card">
-                        <div class="p-visual" onclick='window.NodoUI.openPdp({id:@p.Id, name:"@p.Name", brand:"@p.Brand", category:"@p.Category", price:@p.Price, wasPrice:@(p.WasPrice.HasValue ? p.WasPrice.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null"), spec:"@p.Spec", desc:"@p.Description", imageUrl:"@p.ImageUrl", badge:"@p.Badge"})' style="cursor:pointer">
+                        <div class="p-visual" onclick='window.NodoUI.openPdp({id:@p.Id, name:"@p.Name", brand:"@p.Brand", category:"@(p.Category?.Name ?? p.CategoryName ?? "")", price:@p.Price, wasPrice:@(p.WasPrice.HasValue ? p.WasPrice.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null"), spec:"@p.Spec", desc:"@p.Description", imageUrl:"@p.ImageUrl", badge:"@p.Badge"})' style="cursor:pointer">
                             @if (!string.IsNullOrEmpty(p.Badge))
                             {
                                 <span class="badge">@p.Badge</span>
@@ -147,7 +147,7 @@
                                     data-name="@p.Name" 
                                     data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
                                     data-brand="@(p.Brand ?? "")" 
-                                    data-category="@(p.Category ?? "")" 
+                                    data-category="@(p.Category?.Name ?? p.CategoryName ?? "")" 
                                     data-spec="@(p.Spec ?? "")" 
                                     data-image="@(p.ImageUrl ?? "")"
                                     onclick="window.NodoCart.addFromButton(this)">

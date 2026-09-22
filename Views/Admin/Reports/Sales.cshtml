@@ -1,0 +1,138 @@
+@model List<EcommerceApp.Models.Reports.SalesReportRow>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Reporte de Ventas";
+    var filter = ViewBag.Filter as EcommerceApp.Models.Reports.SalesReportFilter ?? new();
+    var summary = ViewBag.Summary as EcommerceApp.Models.Reports.SalesReportSummary ?? new();
+    var storeName = ViewBag.StoreName as string ?? "NODO";
+    var generatedAt = ViewBag.GeneratedAt as DateTime? ?? DateTime.Now;
+}
+
+<div style="max-width:1240px;margin:0 auto;">
+    <!-- Header del reporte -->
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;">
+        <div class="row-between" style="flex-wrap:wrap;gap:16px;margin-bottom:16px;">
+            <div class="row" style="gap:16px;align-items:center;">
+                <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),color-mix(in oklch, var(--accent) 70%, black));display:grid;place-items:center;color:white;font-size:24px;font-weight:700;font-family:var(--font-display);">N</div>
+                <div>
+                    <h1 class="h1" style="margin:0;font-size:26px;">@storeName</h1>
+                    <div class="meta" style="margin-top:2px;">@storeName · Tecnología Curada</div>
+                </div>
+            </div>
+            <div style="text-align:right;min-width:220px;">
+                <div class="meta" style="font-size:12px;margin-bottom:4px;">Generado el</div>
+                <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;">@generatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:16px;">
+            <h2 class="h2" style="margin:0;font-size:20px;text-align:center;">REPORTE DE VENTAS</h2>
+            <div class="meta" style="text-align:center;margin-top:4px;">
+                @if (filter.StartDate.HasValue || filter.EndDate.HasValue || (filter.Status != null && filter.Status != "all"))
+                {
+                    <span>Filtros: </span>
+                    @if (filter.StartDate.HasValue) { <span>Desde @filter.StartDate.Value.ToString("dd/MM/yyyy")</span> }
+                    @if (filter.EndDate.HasValue) { <span>Hasta @filter.EndDate.Value.ToString("dd/MM/yyyy")</span> }
+                    @if (filter.Status != null && filter.Status != "all") { <span>Estado: @filter.Status</span> }
+                }
+                else
+                {
+                    <span>Sin filtros aplicados (todos los pedidos)</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar de acciones -->
+    <div class="row-between" style="flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:center;">
+        <div>
+            <a asp-action="Index" class="btn btn-ghost btn-sm">← Volver a Reportes</a>
+            <a asp-action="SalesPdf" asp-route-startDate="@(filter.StartDate?.ToString("yyyy-MM-dd"))" asp-route-endDate="@(filter.EndDate?.ToString("yyyy-MM-dd"))" asp-route-status="@filter.Status" class="btn btn-accent btn-sm">⬇ Descargar PDF</a>
+        </div>
+    </div>
+
+    <!-- Tabla de datos -->
+    <div class="card" style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div class="table-wrap">
+            <table class="ds-table" style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:var(--bg);border-bottom:2px solid var(--border);">
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);white-space:nowrap;">N° Pedido</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;white-space:nowrap;">Fecha</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Cliente</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Email</th>
+                        <th style="padding:12px 16px;text-align:center;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Estado</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Método Pago</th>
+                        <th style="padding:12px 16px;text-align:center;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);">Cant. Prod.</th>
+                        <th style="padding:12px 16px;text-align:right;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);">Subtotal</th>
+                        <th style="padding:12px 16px;text-align:right;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);">Envío</th>
+                        <th style="padding:12px 16px;text-align:right;font-weight:700;font-size:12px;font-family:var(--font-mono);">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var statusClass = item.Status switch
+                            {
+                                "Pendiente" => "s-pendiente",
+                                "Pago Acreditado" => "s-pago",
+                                "En Preparación" => "s-preparando",
+                                "En Camino" => "s-enviado",
+                                "Entregado" => "s-entregado",
+                                "Cancelado" => "s-cancelado",
+                                _ => "s-pendiente"
+                            };
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-family:var(--font-mono);font-weight:600;font-size:13px;">#@item.OrderNumber</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:13px;">@item.Date.ToString("dd/MM/yyyy")</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-weight:600;font-size:13px;">@item.CustomerName</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:12px;color:var(--muted);">@item.Email</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:center;">
+                                    <span class="status @statusClass" style="font-size:11px;padding:4px 10px;border-radius:999px;">@item.Status</span>
+                                </td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:12px;">@item.PaymentMethod</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:center;font-family:var(--font-mono);font-weight:600;font-size:13px;">@item.ProductsQuantity</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:right;font-family:var(--font-mono);font-size:13px;">Bs @item.Subtotal.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:right;font-family:var(--font-mono);font-size:13px;">Bs @item.ShippingCost.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</td>
+                                <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-weight:700;font-size:13px;">Bs @item.Total.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" style="padding:48px;text-align:center;color:var(--muted);">No se encontraron pedidos con los filtros seleccionados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer / Resumen -->
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:24px;">
+        <h3 class="h3" style="margin:0 0 16px;font-size:16px;">Resumen del Reporte</h3>
+        <div class="grid-4" style="gap:16px;">
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Total Pedidos</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--fg);margin-top:4px;">@summary.TotalOrders</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Productos Vendidos</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--fg);margin-top:4px;">@summary.TotalProductsSold</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Ventas Totales</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--accent);margin-top:4px;">Bs @summary.TotalSales.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Ticket Promedio</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--fg);margin-top:4px;">Bs @summary.AverageTicket.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</div>
+            </div>
+        </div>
+        <div class="meta" style="text-align:right;margin-top:16px;font-family:var(--font-mono);font-size:11px;color:var(--muted);">
+            Página 1 de 1 · Generado por @storeName Admin
+        </div>
+    </div>
+</div>

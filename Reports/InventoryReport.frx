@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="C#" ReportName="InventoryReport" ReportAlias="Reporte de Inventario" ReportVersion="2026.2.8" ReportGUID="{C3D4E5F6-A7B8-9012-CDEF-123456789012}" xmlns="http://www.fastreport.com">
+  <ReportParameter Name="StoreName" Type="String" Value="NODO" />
+  <ReportParameter Name="ReportTitle" Type="String" Value="REPORTE DE INVENTARIO" />
+  <ReportParameter Name="GeneratedAt" Type="String" Value="" />
+  <ReportParameter Name="DistinctProducts" Type="Int32" Value="0" />
+  <ReportParameter Name="TotalUnitsInStock" Type="Int32" Value="0" />
+  <ReportParameter Name="OutOfStockProducts" Type="Int32" Value="0" />
+  <ReportParameter Name="LowStockProducts" Type="Int32" Value="0" />
+  <ReportParameter Name="TotalInventoryValue" Type="Decimal" Value="0" />
+  <DataSource Name="InventoryData" Type="FastReport.Data.ListDataSource">
+    <DataColumn Name="Product" Type="String" />
+    <DataColumn Name="Brand" Type="String" />
+    <DataColumn Name="Category" Type="String" />
+    <DataColumn Name="Stock" Type="Int32" />
+    <DataColumn Name="UnitPrice" Type="Decimal" />
+    <DataColumn Name="InventoryValue" Type="Decimal" />
+    <DataColumn Name="StockStatus" Type="String" />
+  </DataSource>
+  <Page Name="Page1" Width="826.8" Height="1169.3" LeftMargin="20" RightMargin="20" TopMargin="20" BottomMargin="20">
+    <PageHeaderBand Name="PageHeader" Height="120">
+      <TextObject Name="TxtStoreName" Left="20" Top="10" Width="300" Height="25" Font="Arial, 14pt, style=Bold" Color="0, 0, 0" Text="[StoreName]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtReportTitle" Left="20" Top="40" Width="786.8" Height="30" Font="Arial, 18pt, style=Bold" Color="124, 58, 237" Text="[ReportTitle]" HorzAlign="Center" VertAlign="Center" />
+      <TextObject Name="TxtGeneratedAt" Left="20" Top="80" Width="786.8" Height="20" Font="Arial, 10pt" Color="100, 100, 100" Text="Generado: [GeneratedAt]" HorzAlign="Right" VertAlign="Center" />
+      <LineObject Name="LineHeader" Left="20" Top="110" Width="786.8" Height="1" Color="124, 58, 237" Style="Solid" />
+    </PageHeaderBand>
+    <MasterDataBand Name="Detail" Height="28" DataSource="InventoryData">
+      <TextObject Name="TxtProduct" Left="5" Top="4" Width="180" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[InventoryData.Product]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtBrand" Left="190" Top="4" Width="80" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[InventoryData.Brand]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtCategory" Left="275" Top="4" Width="85" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[InventoryData.Category]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtStock" Left="365" Top="4" Width="55" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[InventoryData.Stock]" HorzAlign="Center" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtUnitPrice" Left="425" Top="4" Width="90" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[InventoryData.UnitPrice]" FormatStr="Bs #,##0.00" HorzAlign="Right" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtInventoryValue" Left="520" Top="4" Width="110" Height="20" Font="Arial, 8pt, style=Bold" Color="124, 58, 237" Text="[InventoryData.InventoryValue]" FormatStr="Bs #,##0.00" HorzAlign="Right" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtStockStatus" Left="635" Top="4" Width="100" Height="20" Font="Arial, 8pt, style=Bold" Color="0, 0, 0" Text="[InventoryData.StockStatus]" HorzAlign="Center" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+    </MasterDataBand>
+    <PageFooterBand Name="PageFooter" Height="80">
+      <LineObject Name="LineFooter" Left="20" Top="5" Width="786.8" Height="1" Color="124, 58, 237" Style="Solid" />
+      <TextObject Name="TxtDistinctProducts" Left="20" Top="15" Width="180" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 0, 0" Text="Productos diferentes: [DistinctProducts]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtTotalUnits" Left="20" Top="35" Width="200" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 0, 0" Text="Unidades en stock: [TotalUnitsInStock]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtOutOfStock" Left="20" Top="55" Width="200" Height="20" Font="Arial, 10pt, style=Bold" Color="220, 38, 38" Text="Productos agotados: [OutOfStockProducts]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtLowStock" Left="400" Top="15" Width="200" Height="20" Font="Arial, 10pt, style=Bold" Color="217, 119, 6" Text="Stock bajo (≤5): [LowStockProducts]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtTotalInventory" Left="400" Top="35" Width="280" Height="20" Font="Arial, 10pt, style=Bold" Color="124, 58, 237" Text="Valor total inventario: [TotalInventoryValue]" FormatStr="Bs #,##0.00" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtPage" Left="700" Top="55" Width="100" Height="20" Font="Arial, 9pt" Color="100, 100, 100" Text="Página [Page#] de [TotalPages#]" HorzAlign="Right" VertAlign="Center" />
+    </PageFooterBand>
+  </Page>
+</Report>

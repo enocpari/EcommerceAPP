@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="C#" ReportName="SalesReport" ReportAlias="Reporte de Ventas" ReportVersion="2026.2.8" ReportGUID="{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}" xmlns="http://www.fastreport.com">
+  <ReportParameter Name="StoreName" Type="String" Value="NODO" />
+  <ReportParameter Name="ReportTitle" Type="String" Value="REPORTE DE VENTAS" />
+  <ReportParameter Name="GeneratedAt" Type="String" Value="" />
+  <ReportParameter Name="StartDate" Type="String" Value="" />
+  <ReportParameter Name="EndDate" Type="String" Value="" />
+  <ReportParameter Name="StatusFilter" Type="String" Value="" />
+  <ReportParameter Name="TotalOrders" Type="Int32" Value="0" />
+  <ReportParameter Name="TotalProductsSold" Type="Int32" Value="0" />
+  <ReportParameter Name="TotalSales" Type="Decimal" Value="0" />
+  <ReportParameter Name="AverageTicket" Type="Decimal" Value="0" />
+  <DataSource Name="SalesData" Type="FastReport.Data.ListDataSource">
+    <DataColumn Name="OrderNumber" Type="String" />
+    <DataColumn Name="Date" Type="DateTime" />
+    <DataColumn Name="CustomerName" Type="String" />
+    <DataColumn Name="Email" Type="String" />
+    <DataColumn Name="Status" Type="String" />
+    <DataColumn Name="PaymentMethod" Type="String" />
+    <DataColumn Name="ProductsQuantity" Type="Int32" />
+    <DataColumn Name="Subtotal" Type="Decimal" />
+    <DataColumn Name="ShippingCost" Type="Decimal" />
+    <DataColumn Name="Total" Type="Decimal" />
+  </DataSource>
+  <Page Name="Page1" Width="826.8" Height="1169.3" LeftMargin="20" RightMargin="20" TopMargin="20" BottomMargin="20">
+    <PageHeaderBand Name="PageHeader" Height="140">
+      <TextObject Name="TxtStoreName" Left="20" Top="10" Width="300" Height="25" Font="Arial, 14pt, style=Bold" Color="0, 0, 0" Text="[StoreName]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtReportTitle" Left="20" Top="40" Width="786.8" Height="30" Font="Arial, 18pt, style=Bold" Color="0, 51, 102" Text="[ReportTitle]" HorzAlign="Center" VertAlign="Center" />
+      <TextObject Name="TxtGeneratedAt" Left="20" Top="80" Width="786.8" Height="20" Font="Arial, 10pt" Color="100, 100, 100" Text="Generado: [GeneratedAt]" HorzAlign="Right" VertAlign="Center" />
+      <TextObject Name="TxtFilters" Left="20" Top="105" Width="786.8" Height="20" Font="Arial, 9pt" Color="120, 120, 120" Text="Filtros: Desde [StartDate] Hasta [EndDate] | Estado: [StatusFilter]" HorzAlign="Left" VertAlign="Center" />
+      <LineObject Name="LineHeader" Left="20" Top="130" Width="786.8" Height="1" Color="0, 51, 102" Style="Solid" />
+    </PageHeaderBand>
+    <MasterDataBand Name="Detail" Height="28" DataSource="SalesData">
+      <TextObject Name="TxtOrderNumber" Left="5" Top="4" Width="80" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.OrderNumber]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtDate" Left="90" Top="4" Width="75" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.Date]" FormatStr="dd/MM/yyyy" HorzAlign="Center" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtCustomer" Left="170" Top="4" Width="130" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.CustomerName]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtEmail" Left="305" Top="4" Width="130" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.Email]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtStatus" Left="440" Top="4" Width="80" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.Status]" HorzAlign="Center" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtPaymentMethod" Left="525" Top="4" Width="100" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.PaymentMethod]" HorzAlign="Left" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtQty" Left="630" Top="4" Width="45" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.ProductsQuantity]" HorzAlign="Center" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtSubtotal" Left="680" Top="4" Width="80" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.Subtotal]" FormatStr="Bs #,##0.00" HorzAlign="Right" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtShipping" Left="765" Top="4" Width="70" Height="20" Font="Arial, 8pt" Color="0, 0, 0" Text="[SalesData.ShippingCost]" FormatStr="Bs #,##0.00" HorzAlign="Right" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+      <TextObject Name="TxtTotal" Left="840" Top="4" Width="90" Height="20" Font="Arial, 8pt, style=Bold" Color="0, 51, 102" Text="[SalesData.Total]" FormatStr="Bs #,##0.00" HorzAlign="Right" VertAlign="Center" Border="Bottom" BorderColor="200, 200, 200" />
+    </MasterDataBand>
+    <PageFooterBand Name="PageFooter" Height="80">
+      <LineObject Name="LineFooter" Left="20" Top="5" Width="786.8" Height="1" Color="0, 51, 102" Style="Solid" />
+      <TextObject Name="TxtTotalOrders" Left="20" Top="15" Width="150" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 0, 0" Text="Total pedidos: [TotalOrders]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtTotalProducts" Left="20" Top="35" Width="180" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 0, 0" Text="Productos vendidos: [TotalProductsSold]" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtTotalSales" Left="20" Top="55" Width="250" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 100, 0" Text="Ventas totales: [TotalSales]" FormatStr="Bs #,##0.00" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtAvgTicket" Left="400" Top="15" Width="200" Height="20" Font="Arial, 10pt, style=Bold" Color="0, 0, 0" Text="Ticket promedio: [AverageTicket]" FormatStr="Bs #,##0.00" HorzAlign="Left" VertAlign="Center" />
+      <TextObject Name="TxtPage" Left="700" Top="55" Width="100" Height="20" Font="Arial, 9pt" Color="100, 100, 100" Text="Página [Page#] de [TotalPages#]" HorzAlign="Right" VertAlign="Center" />
+    </PageFooterBand>
+  </Page>
+  <ReportStyleSheet>
+    <Style Name="Header" Font="Arial, 9pt, style=Bold" Color="White" FillColor="0, 51, 102" Border="All" BorderColor="0, 51, 102" />
+    <Style Name="Data" Font="Arial, 8pt" Color="0, 0, 0" Border="Bottom" BorderColor="200, 200, 200" />
+    <Style Name="Total" Font="Arial, 9pt, style=Bold" Color="0, 51, 102" Border="Top" BorderColor="0, 51, 102" />
+  </ReportStyleSheet>
+</Report>

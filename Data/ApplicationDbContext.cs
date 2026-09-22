@@ -9,6 +9,7 @@ namespace EcommerceApp.Data
         : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
@@ -22,6 +23,16 @@ namespace EcommerceApp.Data
             modelBuilder.Entity<Product>()
                 .Property(p => p.WasPrice)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
 
             modelBuilder.Entity<Order>()
                 .Property(o => o.Subtotal)

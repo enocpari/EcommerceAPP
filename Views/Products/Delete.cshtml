@@ -13,7 +13,7 @@
         <p class="meta" style="margin-top:6px;">Esta acción retirará el artículo inmediatamente del catálogo público.</p>
 
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:16px;margin-block:18px;">
-            <div class="meta">@(Model.Brand ?? "NODO") · @(Model.Category ?? "Producto")</div>
+            <div class="meta">@(Model.Brand ?? "NODO") · @(Model.Category?.Name ?? Model.CategoryName ?? "Producto")</div>
             <strong style="font-size:16px;display:block;margin-top:2px;">@Model.Name</strong>
             <div class="num" style="font-size:18px;font-weight:700;margin-top:4px;">
                 $@Model.Price.ToString("N0", new System.Globalization.CultureInfo("es-AR"))

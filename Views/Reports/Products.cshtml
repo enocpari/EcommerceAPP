@@ -1,0 +1,121 @@
+@model List<EcommerceApp.Models.Reports.ProductReportRow>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Reporte de Productos";
+    var summary = ViewBag.Summary as EcommerceApp.Models.Reports.ProductReportSummary ?? new();
+    var storeName = ViewBag.StoreName as string ?? "NODO";
+    var generatedAt = ViewBag.GeneratedAt as DateTime? ?? DateTime.Now;
+}
+
+<div style="max-width:1240px;margin:0 auto;">
+    <!-- Header del reporte -->
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;">
+        <div class="row-between" style="flex-wrap:wrap;gap:16px;margin-bottom:16px;">
+            <div class="row" style="gap:16px;align-items:center;">
+                <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:grid;place-items:center;color:white;font-size:24px;font-weight:700;font-family:var(--font-display);">📱</div>
+                <div>
+                    <h1 class="h1" style="margin:0;font-size:26px;">@storeName</h1>
+                    <div class="meta" style="margin-top:2px;">@storeName · Tecnología Curada</div>
+                </div>
+            </div>
+            <div style="text-align:right;min-width:220px;">
+                <div class="meta" style="font-size:12px;margin-bottom:4px;">Generado el</div>
+                <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;">@generatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:16px;">
+            <h2 class="h2" style="margin:0;font-size:20px;text-align:center;">REPORTE DE CATÁLOGO DE PRODUCTOS</h2>
+        </div>
+    </div>
+
+    <!-- Toolbar de acciones -->
+    <div class="row-between" style="flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:center;">
+        <div>
+            <a asp-action="Index" class="btn btn-ghost btn-sm">← Volver a Reportes</a>
+            <a asp-action="ProductsPdf" class="btn btn-accent btn-sm">⬇ Descargar PDF</a>
+        </div>
+    </div>
+
+    <!-- Tabla de datos -->
+    <div class="card" style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div class="table-wrap">
+            <table class="ds-table" style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:var(--bg);border-bottom:2px solid var(--border);">
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);white-space:nowrap;">Id</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Nombre</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Marca</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Categoría</th>
+                        <th style="padding:12px 16px;text-align:left;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Especificación</th>
+                        <th style="padding:12px 16px;text-align:right;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);">Precio</th>
+                        <th style="padding:12px 16px;text-align:center;border-right:1px solid var(--border);font-weight:700;font-size:12px;font-family:var(--font-mono);">Stock</th>
+                        <th style="padding:12px 16px;text-align:center;border-right:1px solid var(--border);font-weight:700;font-size:12px;">Estado</th>
+                        <th style="padding:12px 16px;text-align:center;font-weight:700;font-size:12px;">Oferta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-family:var(--font-mono);font-weight:600;font-size:13px;">@item.Id</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-weight:600;font-size:13px;">@item.Name</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:13px;">@item.Brand</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:13px;">@item.Category</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);font-size:12px;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@item.Spec</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:right;font-family:var(--font-mono);font-size:13px;">Bs @item.Price.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:center;font-family:var(--font-mono);font-weight:600;font-size:13px;@(item.Stock == 0 ? "color:#dc2626;" : item.Stock <= 5 ? "color:#d97706;" : "color:#16a34a;")">@item.Stock</td>
+                                <td style="padding:12px 16px;border-right:1px solid var(--border);text-align:center;font-size:12px;">
+                                    <span class="status @(item.Status == "Activo" ? "s-entregado" : "s-cancelado")" style="font-size:11px;padding:3px 8px;border-radius:999px;">@item.Status</span>
+                                </td>
+                                <td style="padding:12px 16px;text-align:center;font-size:12px;">
+                                    @if (item.IsOffer)
+                                    {
+                                        <span class="status s-pago" style="font-size:11px;padding:3px 8px;border-radius:999px;">Sí</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="meta">No</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" style="padding:48px;text-align:center;color:var(--muted);">No se encontraron productos.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer / Resumen -->
+    <div class="card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:24px;">
+        <h3 class="h3" style="margin:0 0 16px;font-size:16px;">Resumen del Catálogo</h3>
+        <div class="grid-4" style="gap:16px;">
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Total Productos</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--fg);margin-top:4px;">@summary.TotalProducts</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Productos Activos</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:#16a34a;margin-top:4px;">@summary.ActiveProducts</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Productos Agotados</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:#dc2626;margin-top:4px;">@summary.OutOfStockProducts</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+                <div class="meta" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Valor Inventario</div>
+                <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--accent);margin-top:4px;">Bs @summary.InventoryValue.ToString("N2", new System.Globalization.CultureInfo("es-BO"))</div>
+            </div>
+        </div>
+        <div class="meta" style="text-align:right;margin-top:16px;font-family:var(--font-mono);font-size:11px;color:var(--muted);">
+            Página 1 de 1 · Generado por @storeName Admin
+        </div>
+    </div>
+</div>

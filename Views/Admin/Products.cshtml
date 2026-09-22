@@ -60,7 +60,7 @@
                 }
                 @foreach (var item in Model)
                 {
-                    var isCel = (item.Category ?? "").ToLower().Contains("celular");
+                    var isCel = (item.Category?.Name ?? item.CategoryName ?? "").ToLower().Contains("celular");
                     <tr>
                         <td>
                             <div style="width:40px;height:40px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;">
