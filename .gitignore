@@ -28,3 +28,6 @@ appsettings.Local.json
 
 ## Connection strings reales con password (solo se versionan vacias)
 appsettings.Local.*.json
+
+## Artefactos de pruebas de navegador
+.playwright-mcp/
