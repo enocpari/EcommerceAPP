@@ -23,7 +23,10 @@ builder.Services.AddSingleton<StoreConfigService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), npgsql =>
+    {
+        npgsql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null);
+    }));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {

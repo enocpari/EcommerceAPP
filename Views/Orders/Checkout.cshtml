@@ -18,7 +18,7 @@
         <div style="font-size:48px;margin-bottom:12px;">🛒</div>
         <h2 class="h2" style="font-size:20px;margin-bottom:8px;">Tu carrito de compras está vacío</h2>
         <p class="meta" style="margin-bottom:20px;">No has agregado ningún producto para realizar un pedido.</p>
-        <a href="/Products" class="btn btn-accent" style="padding:12px 24px;">Explorar Catálogo NODO</a>
+        <a href="/Products" class="btn btn-accent btn-lg">Explorar Catálogo NODO</a>
     </div>
 
     <!-- Checkout Main Content -->
@@ -121,16 +121,16 @@
                     <!-- Método de Envío -->
                     <div>
                         <label class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Selecciona la forma de entrega</label>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:10px;">
-                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
-                                <input type="radio" asp-for="ShippingMethod" value="Envío Express a Domicilio" checked style="margin-top:3px;" />
+                        <div class="btn-group" role="group" aria-label="Método de envío" style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <label class="btn btn-toggle" style="flex:1;min-width:200px;text-align:left;padding:14px 16px;">
+                                <input type="radio" asp-for="ShippingMethod" value="Envío Express a Domicilio" checked style="margin-right:10px;" />
                                 <div>
                                     <strong style="font-size:13.5px;display:block;">Envío Express a Domicilio</strong>
                                     <span class="meta" style="font-size:12px;">Entrega en 24h · Bonificado $0</span>
                                 </div>
                             </label>
-                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
-                                <input type="radio" asp-for="ShippingMethod" value="Retiro en Sucursal Central" style="margin-top:3px;" />
+                            <label class="btn btn-toggle" style="flex:1;min-width:200px;text-align:left;padding:14px 16px;">
+                                <input type="radio" asp-for="ShippingMethod" value="Retiro en Sucursal Central" style="margin-right:10px;" />
                                 <div>
                                     <strong style="font-size:13.5px;display:block;">Retiro en Tienda Central</strong>
                                     <span class="meta" style="font-size:12px;">Disponible hoy mismo</span>
@@ -142,8 +142,8 @@
                     <!-- Método de Pago Interactivo -->
                     <div>
                         <label class="form-label" style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Selecciona el método de pago</label>
-                        <div class="stack" style="gap:10px;">
-                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                        <div class="stack" style="gap:8px;">
+                            <label class="btn btn-toggle" style="text-align:left;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
                                 <input type="radio" asp-for="PaymentMethod" value="QR Simple" checked style="margin-top:3px;" onchange="updatePaymentView()" />
                                 <div style="flex:1;">
                                     <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -154,7 +154,7 @@
                                 </div>
                             </label>
 
-                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                            <label class="btn btn-toggle" style="text-align:left;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
                                 <input type="radio" asp-for="PaymentMethod" value="Transferencia Bancaria" style="margin-top:3px;" onchange="updatePaymentView()" />
                                 <div>
                                     <strong style="font-size:13.5px;display:block;">Transferencia Bancaria Directa</strong>
@@ -162,7 +162,7 @@
                                 </div>
                             </label>
 
-                            <label style="border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--bg);display:flex;gap:12px;align-items:start;cursor:pointer;">
+                            <label class="btn btn-toggle" style="text-align:left;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
                                 <input type="radio" asp-for="PaymentMethod" value="Efectivo contra entrega" style="margin-top:3px;" onchange="updatePaymentView()" />
                                 <div>
                                     <strong style="font-size:13.5px;display:block;">Pago en Efectivo contra entrega</strong>
@@ -232,7 +232,7 @@
             </div>
 
             <!-- Submit Button (Mobile & Desktop) -->
-            <button type="submit" id="btnSubmitOrder" class="btn btn-accent" style="width:100%;padding:16px 24px;font-size:16px;font-weight:700;letter-spacing:0.02em;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,0.25);">
+            <button type="submit" id="btnSubmitOrder" class="btn btn-accent btn-lg btn-block">
                 Confirmar y Registrar Pedido 🛍️
             </button>
             <p class="meta" style="text-align:center;font-size:12px;">

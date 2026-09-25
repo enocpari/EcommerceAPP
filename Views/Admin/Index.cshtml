@@ -13,7 +13,7 @@
         </div>
         <div class="row" style="gap:10px;">
             <a asp-action="Products" class="btn btn-secondary btn-sm">Ver catálogo completo</a>
-            <a asp-controller="Products" asp-action="Create" class="btn btn-primary btn-sm">+ Cargar producto</a>
+            <a asp-controller="Products" asp-action="Create" class="btn btn-accent btn-sm">+ Cargar producto</a>
         </div>
     </div>
 
@@ -39,7 +39,7 @@
             <div class="num kpi-value">@ViewBag.PendingOrders</div>
             <div class="kpi-label">3 pagos acreditados · 2 en preparación</div>
             <div class="row" style="margin-top:6px;">
-                <a asp-action="Orders" class="btn btn-secondary btn-sm" style="width:100%;font-size:12px;">Revisar despachos →</a>
+                <a asp-action="Orders" class="btn btn-secondary btn-md btn-block">Revisar despachos →</a>
             </div>
         </div>
 
@@ -51,7 +51,7 @@
             <div class="num kpi-value" style="color:@(ViewBag.LowStockCount > 0 ? "#dc2626" : "var(--fg)")">@ViewBag.LowStockCount</div>
             <div class="kpi-label">@(ViewBag.OutOfStockCount > 0 ? $"{ViewBag.OutOfStockCount} productos agotados" : "Sin faltantes totales")</div>
             <div class="row" style="margin-top:6px;">
-                <a asp-action="Inventory" class="btn btn-secondary btn-sm" style="width:100%;font-size:12px;">Ir a inventario →</a>
+                <a asp-action="Inventory" class="btn btn-secondary btn-md btn-block">Ir a inventario →</a>
             </div>
         </div>
 
@@ -63,7 +63,7 @@
             <div class="num kpi-value">@ViewBag.TotalProducts</div>
             <div class="kpi-label">Total unidades en stock: <span class="num" style="font-weight:700">@ViewBag.TotalStock</span></div>
             <div class="row" style="margin-top:6px;">
-                <a asp-action="Products" class="btn btn-secondary btn-sm" style="width:100%;font-size:12px;">Gestionar productos →</a>
+                <a asp-action="Products" class="btn btn-secondary btn-md btn-block">Gestionar productos →</a>
             </div>
         </div>
     </div>
@@ -118,7 +118,7 @@
                                 {
                                     <span class="status s-pendiente" style="font-size:10px;">@item.Stock unid.</span>
                                 }
-                                <a asp-controller="Products" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;">Editar</a>
+                                <a asp-controller="Products" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-xs">Editar</a>
                             </div>
                         </div>
                     }
@@ -138,7 +138,7 @@
                 <h3 class="h3" style="font-size:16px;">Pedidos recientes en plataforma</h3>
                 <div class="meta" style="margin-top:2px;">Últimas transacciones procesadas con MercadoPago y tarjetas</div>
             </div>
-            <a asp-action="Orders" class="btn btn-secondary btn-sm">Ver todos los pedidos</a>
+            <a asp-action="Orders" class="btn btn-secondary btn-md">Ver todos los pedidos</a>
         </div>
 
         <div class="table-wrap">
@@ -185,7 +185,7 @@
                                 </td>
                                 <td class="num-col" style="font-weight:700;font-family:var(--font-mono);">$@order.Total.ToString("N0")</td>
                                 <td>
-                                    <a asp-action="OrderDetail" asp-route-id="@order.Id" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;">Ver Detalle</a>
+                                    <a asp-action="OrderDetail" asp-route-id="@order.Id" class="btn btn-secondary btn-xs">Ver Detalle</a>
                                 </td>
                             </tr>
                         }

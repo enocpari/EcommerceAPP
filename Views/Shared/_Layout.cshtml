@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] — @StoreConfig.GetSettings().BrandName · @StoreConfig.GetSettings().Tagline</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/nodo-tokens.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EcommerceApp.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -18,11 +17,11 @@
                 <span>@StoreConfig.GetSettings().BrandName</span>
             </a>
             
-            <!-- ENLACES DE NAVEGACIÓN -->
-            <nav class="nav-links hide-m">
-                <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Home" ? "active" : "")">Inicio</a>
-                <a asp-controller="Products" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Products" ? "active" : "")">Catálogo</a>
-                <a href="#soporte" onclick="window.NodoUI.openDrawer('soporteDrawer');return false;">Soporte y Asesoría</a>
+            <!-- ENLACES DE NAVEGACIÓN - Modern Pills -->
+            <nav class="nav-pills hide-m" aria-label="Navegación principal">
+                <a asp-controller="Home" asp-action="Index" class="nav-pill @(ViewContext.RouteData.Values["controller"]?.ToString()=="Home" ? "active" : "")">Inicio</a>
+                <a asp-controller="Products" asp-action="Index" class="nav-pill @(ViewContext.RouteData.Values["controller"]?.ToString()=="Products" ? "active" : "")">Catálogo</a>
+                <a href="#soporte" class="nav-pill" onclick="window.NodoUI.openDrawer('soporteDrawer');return false;">Soporte y Asesoría</a>
             </nav>
 
             <!-- BUSCADOR -->
@@ -35,12 +34,15 @@
             <div class="topnav-actions">
                 @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
                 {
-                    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary btn-sm nav-btn-admin" title="Panel de Administración">⚙ Admin</a>
+                    <a asp-controller="Admin" asp-action="Index" class="btn btn-accent btn-sm" title="Panel de Administración" aria-label="Panel de Administración">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                        <span class="hide-m">Admin</span>
+                    </a>
                 }
-                <button class="btn btn-secondary btn-sm nav-btn-cart" onclick="window.NodoUI.openDrawer('cartDrawer')">
+                <button class="btn btn-accent btn-sm" onclick="window.NodoUI.openDrawer('cartDrawer')" aria-label="Abrir carrito de compras">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 9H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
                     <span class="hide-m">Carrito</span>
-                    <span class="pill cart-count-val" style="display:none;background:var(--accent);color:#fff;padding:2px 7px;font-size:10px;">0</span>
+                    <span class="pill cart-count-val" style="display:none;">0</span>
                 </button>
                 <partial name="_LoginPartial" />
             </div>
@@ -52,13 +54,14 @@
     </main>
 
     <!-- Barra de navegación rápida móvil -->
-    <div class="mobile-bar">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-ghost btn-sm" style="color:var(--surface)">Inicio</a>
-        <a asp-controller="Products" asp-action="Index" class="btn btn-ghost btn-sm" style="color:var(--surface)">Catálogo</a>
-        <button class="btn btn-accent btn-sm" onclick="window.NodoUI.openDrawer('cartDrawer')">
-            Carrito (<span class="cart-count-val">0</span>)
+    <div class="mobile-bar" role="navigation" aria-label="Navegación móvil">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-ghost btn-sm" aria-label="Ir a inicio">Inicio</a>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-ghost btn-sm" aria-label="Ir al catálogo">Catálogo</a>
+        <button class="btn btn-accent btn-sm" onclick="window.NodoUI.openDrawer('cartDrawer')" aria-label="Abrir carrito">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l-1 9H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+            <span class="cart-count-val">0</span>
         </button>
-        <button class="btn btn-ghost btn-sm" style="color:var(--surface)" onclick="window.NodoUI.openDrawer('soporteDrawer')">Ayuda</button>
+        <button class="btn btn-ghost btn-sm" onclick="window.NodoUI.openDrawer('soporteDrawer')" aria-label="Abrir ayuda">Ayuda</button>
     </div>
 
     <!-- CART DRAWER -->

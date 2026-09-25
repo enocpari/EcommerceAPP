@@ -2,6 +2,7 @@
 (function () {
     const STORAGE_KEY = 'nodo_cart_items';
     let cart = [];
+    let lastFocusedElement = null;
 
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -27,9 +28,15 @@
     function openDrawer(id) {
         const d = document.getElementById(id);
         if (d) {
+            lastFocusedElement = document.activeElement;
             d.classList.add('open');
             d.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            // Focus first focusable element in drawer
+            setTimeout(() => {
+                const focusable = d.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusable) focusable.focus();
+            }, 50);
         }
     }
 
@@ -39,6 +46,11 @@
             d.classList.remove('open');
             d.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            // Restore focus
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+                lastFocusedElement = null;
+            }
         }
     }
 
@@ -48,11 +60,57 @@
             t = document.createElement('div');
             t.id = 'toast';
             t.className = 'toast';
+            t.setAttribute('role', 'alert');
+            t.setAttribute('aria-live', 'polite');
             document.body.appendChild(t);
         }
         t.textContent = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // Button loading state management
+    function setButtonLoading(btn, loading) {
+        if (!btn) return;
+        if (loading) {
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            btn.setAttribute('aria-busy', 'true');
+        } else {
+            btn.classList.remove('btn-loading');
+            btn.disabled = false;
+            btn.removeAttribute('aria-busy');
+        }
+    }
+
+    // Toggle button group keyboard navigation
+    function initToggleGroups() {
+        document.querySelectorAll('.btn-group[role="group"], .stack .btn-toggle').forEach(group => {
+            const toggles = group.querySelectorAll('.btn-toggle');
+            toggles.forEach((btn, idx) => {
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const next = toggles[(idx + 1) % toggles.length];
+                        next.focus();
+                        next.click();
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prev = toggles[(idx - 1 + toggles.length) % toggles.length];
+                        prev.focus();
+                        prev.click();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        toggles[0].focus();
+                        toggles[0].click();
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        toggles[toggles.length - 1].focus();
+                        toggles[toggles.length - 1].click();
+                    }
+                });
+            });
+        });
     }
 
     function getProductIconSvg(cat) {
@@ -91,7 +149,7 @@
                     </div>
                     <strong style="font-size:16px;font-family:var(--font-display);">Tu carrito está vacío</strong>
                     <p class="meta" style="margin-top:6px;max-width:32ch;margin-inline:auto;">Agrega un celular o unos auriculares seleccionados. Guardamos tus preferencias 48 horas.</p>
-                    <a href="/Products" class="btn btn-accent" style="margin-top:20px;" onclick="window.NodoUI.closeDrawer('cartDrawer')">Explorar catálogo →</a>
+                    <a href="/Products" class="btn btn-accent btn-lg btn-block" style="margin-top:20px;" onclick="window.NodoUI.closeDrawer('cartDrawer')">Explorar catálogo →</a>
                 </div>
             `;
             foot.innerHTML = '';
@@ -162,7 +220,7 @@
                     <span>Total estimado</span>
                     <span class="num" style="color:var(--fg);font-size:18px;">${formatPrice(totalAmount + (diffShipping <= 0 ? 0 : 6500))}</span>
                 </div>
-                <button class="btn btn-accent" style="width:100%;margin-top:6px;padding:13px 18px;font-size:14.5px;" onclick="window.NodoCart.checkout()">
+                <button class="btn btn-accent btn-lg btn-block" onclick="window.NodoCart.checkout()">
                     Iniciar compra segura →
                 </button>
                 <div style="text-align:center;font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-top:4px;">
@@ -323,11 +381,11 @@
         `;
 
         foot.innerHTML = `
-            <div class="row" style="gap:10px;">
-                <button class="btn btn-accent" style="flex:1;" onclick='window.NodoCart.add(${JSON.stringify(prod)}); window.NodoUI.closeDrawer("pdpDrawer");'>
+            <div class="stack" style="gap:10px;">
+                <button class="btn btn-accent btn-lg btn-block" onclick='window.NodoCart.add(${JSON.stringify(prod)}); window.NodoUI.closeDrawer("pdpDrawer");'>
                     Agregar al carrito · ${formatPrice(prod.price)}
                 </button>
-                <a href="/Products/Details/${prod.id}" class="btn btn-secondary">Ver completo →</a>
+                <a href="/Products/Details/${prod.id}" class="btn btn-secondary btn-lg btn-block">Ver completo →</a>
             </div>
         `;
 
@@ -444,6 +502,7 @@
     function initApp() {
         renderCart();
         initHeroSlider();
+        initToggleGroups();
     }
 
     if (document.readyState === 'loading') {
@@ -451,4 +510,7 @@
     } else {
         initApp();
     }
+
+    // Expose setButtonLoading for forms
+    window.NodoUI.setButtonLoading = setButtonLoading;
 })();

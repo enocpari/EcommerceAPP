@@ -14,11 +14,11 @@
         <!-- Demo account selector -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:18px;">
             <div class="meta" style="font-weight:600;color:var(--fg);margin-bottom:6px;">Cuentas demo de prueba:</div>
-            <div class="row" style="gap:6px;flex-wrap:wrap;">
-                <button type="button" class="chip" style="font-size:11px;padding:4px 10px;" onclick="fillDemo('admin@ecommerce.com','Admin123!')">
+            <div class="stack" style="gap:8px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemo('admin@ecommerce.com','Admin123!')">
                     🔑 Admin (Gestión total)
                 </button>
-                <button type="button" class="chip" style="font-size:11px;padding:4px 10px;" onclick="fillDemo('user@ecommerce.com','User123!')">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemo('user@ecommerce.com','User123!')">
                     👤 Usuario demo
                 </button>
             </div>
@@ -46,13 +46,12 @@
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;font-size:14.5px;">
+            <button type="submit" class="btn btn-accent btn-lg btn-block">
                 Iniciar Sesión →
             </button>
 
-            <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted);">
-                ¿No tienes cuenta aún?
-                <a asp-action="Register" style="color:var(--accent);font-weight:600;margin-left:4px;">Regístrate gratis</a>
+            <div style="text-align:center;margin-top:16px;">
+                <a asp-action="Register" class="btn btn-ghost btn-block">Regístrate gratis</a>
             </div>
         </form>
     </div>

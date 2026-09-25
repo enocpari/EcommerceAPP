@@ -14,22 +14,22 @@
         {
             <span class="pill hide-m" style="font-size:9.5px;padding:2px 6px;">Admin</span>
         }
-        <a asp-controller="Orders" asp-action="MyOrders" class="btn btn-ghost btn-sm nav-btn-auth hide-m" style="font-size:12px;padding:0 8px;" title="Ver mis compras">
+        <a asp-controller="Orders" asp-action="MyOrders" class="btn btn-ghost btn-sm hide-m" title="Ver mis compras" aria-label="Ver mis pedidos">
             Mis Pedidos
         </a>
         <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline-flex;margin:0;">
-            <button type="submit" class="btn btn-ghost btn-sm nav-btn-auth" style="font-size:12px;padding:0 10px;" title="Cerrar Sesión">
-                Salir ↗
+            <button type="submit" class="btn btn-ghost btn-sm" title="Cerrar Sesión" aria-label="Cerrar sesión">
+                Salir
             </button>
         </form>
     </div>
 }
 else
 {
-    <a class="btn btn-ghost btn-sm nav-btn-auth" asp-controller="Account" asp-action="Login">
+    <a class="btn btn-secondary btn-sm" asp-controller="Account" asp-action="Login" aria-label="Iniciar sesión">
         Entrar
     </a>
-    <a class="btn btn-primary btn-sm hide-m nav-btn-register" asp-controller="Account" asp-action="Register">
+    <a class="btn btn-accent btn-sm hide-m" asp-controller="Account" asp-action="Register" aria-label="Crear cuenta">
         Registrarse
     </a>
 }

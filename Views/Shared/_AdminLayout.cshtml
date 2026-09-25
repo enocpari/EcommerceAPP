@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] — NODO Panel Administrativo</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/nodo-tokens.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EcommerceApp.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -22,38 +21,38 @@
             <span class="pill" style="margin-left:auto;font-size:9.5px;padding:3px 7px;">v1.0</span>
         </div>
 
-        <nav class="nav">
-            <a asp-controller="Admin" asp-action="Index" class="@(ViewContext.RouteData.Values["action"]?.ToString()=="Index" ? "active" : "")">
+<nav class="nav-pills" style="flex-direction:column;padding:8px;gap:4px;" aria-label="Navegación administrativa">
+            <a asp-controller="Admin" asp-action="Index" class="nav-pill @(ViewContext.RouteData.Values["action"]?.ToString()=="Index" ? "active" : "")">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
                 Resumen
             </a>
-            <a asp-controller="Admin" asp-action="Products" class="@(ViewContext.RouteData.Values["action"]?.ToString()=="Products" ? "active" : "")">
+            <a asp-controller="Admin" asp-action="Products" class="nav-pill @(ViewContext.RouteData.Values["action"]?.ToString()=="Products" ? "active" : "")">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h10M7 14h6"/></svg>
                 Productos
             </a>
-            <a asp-controller="Admin" asp-action="Orders" class="@(ViewContext.RouteData.Values["action"]?.ToString()=="Orders" || ViewContext.RouteData.Values["action"]?.ToString()=="OrderDetail" || ViewContext.RouteData.Values["action"]?.ToString()=="EditOrder" ? "active" : "")">
+            <a asp-controller="Admin" asp-action="Orders" class="nav-pill @(ViewContext.RouteData.Values["action"]?.ToString()=="Orders" || ViewContext.RouteData.Values["action"]?.ToString()=="OrderDetail" || ViewContext.RouteData.Values["action"]?.ToString()=="EditOrder" ? "active" : "")">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 9H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
                 Pedidos
             </a>
-            <a asp-controller="Admin" asp-action="Inventory" class="@(ViewContext.RouteData.Values["action"]?.ToString()=="Inventory" ? "active" : "")">
+            <a asp-controller="Admin" asp-action="Inventory" class="nav-pill @(ViewContext.RouteData.Values["action"]?.ToString()=="Inventory" ? "active" : "")">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M3 15l9 5 9-5"/><path d="M3 12l9 5 9-5"/></svg>
                 Inventario
             </a>
-            <a asp-controller="Reports" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Reports" ? "active" : "")">
+            <a asp-controller="Reports" asp-action="Index" class="nav-pill @(ViewContext.RouteData.Values["controller"]?.ToString()=="Reports" ? "active" : "")">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Reportes
             </a>
-            <a asp-controller="Admin" asp-action="Settings" class="@(ViewContext.RouteData.Values["action"]?.ToString()=="Settings" ? "active" : "")">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <a asp-controller="Admin" asp-action="Settings" class="nav-pill @(ViewContext.RouteData.Values["action"]?.ToString()=="Settings" ? "active" : "")">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 Ajustes de Marca
             </a>
             
             <div style="margin:16px 12px 6px" class="meta">TIENDA PÚBLICA</div>
-            <a asp-controller="Home" asp-action="Index" target="_blank">
+            <a asp-controller="Home" asp-action="Index" target="_blank" class="nav-pill" style="justify-content:flex-start;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3L10 14"/><path d="M3 21l11-11"/></svg>
                 Ver tienda pública ↗
             </a>
-            <a asp-controller="Products" asp-action="Index" target="_blank">
+            <a asp-controller="Products" asp-action="Index" target="_blank" class="nav-pill" style="justify-content:flex-start;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20L16.2 16.2"/></svg>
                 Catálogo en vivo
             </a>
@@ -87,11 +86,13 @@
             </div>
 
             <div class="row" style="gap:10px;">
-                <a asp-controller="Admin" asp-action="Inventory" class="btn btn-ghost btn-sm" title="Alertas de stock">
-                    🔔 <span class="pill" style="margin-left:4px;font-size:10px;">Alertas</span>
+                <a asp-controller="Admin" asp-action="Inventory" class="btn btn-ghost btn-sm" title="Alertas de stock" aria-label="Ver alertas de stock">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="pill hide-m" style="margin-left:4px;font-size:10px;">Alertas</span>
                 </a>
                 <a asp-controller="Products" asp-action="Create" class="btn btn-accent btn-sm">
-                    + Nuevo producto
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span class="hide-m">Nuevo producto</span>
                 </a>
             </div>
         </header>

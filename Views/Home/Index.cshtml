@@ -12,8 +12,8 @@
                 <h1 class="h1">Celulares y auriculares que <span style="color:var(--accent)">sí entiendes.</span></h1>
                 <p class="lead" style="margin-top:16px">Curamos los mejores modelos: solo iPhone, Galaxy, Pixel y el audio más galardonado. Probados, con 12 meses de garantía oficial y cambio en 30 días. Sin letra chica.</p>
                 <div class="hero-actions">
-                    <a asp-controller="Products" asp-action="Index" class="btn btn-accent" style="padding:12px 22px;">Explorar catálogo completo →</a>
-                    <button class="btn btn-secondary" style="padding:12px 18px;" onclick="window.NodoUI.openDrawer('soporteDrawer')">Asesoría gratuita</button>
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-accent btn-lg">Explorar catálogo completo →</a>
+                    <button class="btn btn-secondary btn-lg" onclick="window.NodoUI.openDrawer('soporteDrawer')">Asesoría gratuita</button>
                     <span class="meta" style="display:inline-flex;align-items:center;gap:6px;margin-left:4px">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="color-mix(in oklch, var(--accent) 80%, black)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <b>4.8/5</b> · 2.431 compradores verificados
@@ -76,7 +76,7 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span class="meta" style="font-size:12px;color:var(--fg);font-weight:600;">12 Meses Garantía Oficial Escrita</span>
                     </div>
-                    <a asp-controller="Products" asp-action="Index" class="btn btn-secondary btn-sm" style="font-size:12px;padding:6px 14px;">
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-secondary btn-sm">
                         Ver en catálogo →
                     </a>
                 </div>
@@ -142,18 +142,18 @@
                                     <span class="off">-@discount%</span>
                                 }
                             </div>
-                            <button type="button" class="btn btn-primary p-add btn-sm" 
-                                    data-id="@p.Id" 
-                                    data-name="@p.Name" 
-                                    data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
-                                    data-brand="@(p.Brand ?? "")" 
-                                    data-category="@(p.Category?.Name ?? p.CategoryName ?? "")" 
-                                    data-spec="@(p.Spec ?? "")" 
-                                    data-image="@(p.ImageUrl ?? "")"
-                                    onclick="window.NodoCart.addFromButton(this)">
+                            <button type="button" class="btn btn-accent p-add btn-sm btn-block" 
+                                data-id="@p.Id" 
+                                data-name="@p.Name" 
+                                data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
+                                data-brand="@(p.Brand ?? "")" 
+                                data-category="@(p.Category?.Name ?? p.CategoryName ?? "")" 
+                                data-spec="@(p.Spec ?? "")" 
+                                data-image="@(p.ImageUrl ?? "")"
+                                onclick="window.NodoCart.addFromButton(this)">
                                 Agregar al carrito
                             </button>
-                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="btn btn-ghost btn-sm" style="font-size:12px;text-align:center;padding:4px">
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="btn btn-ghost btn-sm btn-block" style="margin-top:8px;text-align:center;">
                                 Ver detalle completo →
                             </a>
                         </div>
@@ -172,8 +172,8 @@
             <h2 class="h2">Te explicamos la tecnología sin tecnicismos innecesarios.</h2>
             <p class="lead" style="margin-top:12px;">Comprar un smartphone o unos auriculares de gama alta no debería ser confuso. Nuestros especialistas prueban cada equipo y te aconsejan según lo que realmente usas: cámara nocturna, duración de batería para viajes o cancelación de ruido para oficina.</p>
             <div class="row" style="margin-top:20px;gap:12px;flex-wrap:wrap">
-                <button class="btn btn-accent" onclick="window.NodoUI.openDrawer('soporteDrawer')">Consultar por WhatsApp / Chat →</button>
-                <a asp-controller="Home" asp-action="Privacy" class="btn btn-secondary">Conocer garantías @StoreConfig.GetSettings().BrandName</a>
+                <button class="btn btn-accent btn-lg" onclick="window.NodoUI.openDrawer('soporteDrawer')">Consultar por WhatsApp / Chat →</button>
+                <a asp-controller="Home" asp-action="Privacy" class="btn btn-secondary btn-lg">Conocer garantías @StoreConfig.GetSettings().BrandName</a>
             </div>
         </div>
         <div class="card" style="padding:26px;border-radius:20px;background:var(--bg);">

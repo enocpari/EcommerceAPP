@@ -22,5 +22,5 @@ COPY --from=build /app/publish .
 # Variables de entorno para Render
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Comando de inicio
-ENTRYPOINT ["dotnet", "EcommerceApp.dll"]
+# Comando de inicio con migraciones automáticas
+ENTRYPOINT ["sh", "-c", "dotnet ef database update && dotnet EcommerceApp.dll"]

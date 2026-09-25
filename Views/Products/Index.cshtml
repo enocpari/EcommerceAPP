@@ -113,7 +113,7 @@
                             <span style="color:#dc2626">● Agotado temporalmente</span>
                         }
                     </div>
-                    <button type="button" class="btn btn-primary p-add btn-sm" 
+                    <button type="button" class="btn btn-accent p-add btn-sm btn-block" 
                             data-id="@p.Id" 
                             data-name="@p.Name" 
                             data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" 
@@ -124,13 +124,13 @@
                             onclick="window.NodoCart.addFromButton(this)">
                         Agregar al carrito
                     </button>
-                    <div class="row" style="gap:6px;margin-top:2px;">
-                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-ghost btn-sm" style="flex:1;font-size:12px;">Ficha completa →</a>
-                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
-                        {
-                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-secondary btn-sm" style="padding:4px 8px;font-size:11px;">Editar</a>
-                        }
-                    </div>
+                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-ghost btn-sm btn-block" style="margin-top:8px;text-align:center;">
+                        Ficha completa →
+                    </a>
+                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-secondary btn-sm btn-block" style="margin-top:8px;text-align:center;">Editar</a>
+                    }
                 </div>
             </article>
         }
@@ -149,7 +149,7 @@
     <div class="card" style="padding:22px;border-radius:18px;">
         <h3 class="h3">¿Necesitas ayuda para elegir?</h3>
         <p class="meta" style="margin-top:6px">Cuéntanos tu presupuesto y uso principal (juegos, fotos, batería, teletrabajo) y te asesoramos.</p>
-        <button onclick="window.NodoUI.openDrawer('soporteDrawer')" class="btn btn-accent" style="width:100%;margin-top:16px;">
+        <button onclick="window.NodoUI.openDrawer('soporteDrawer')" class="btn btn-accent btn-lg" style="width:100%;margin-top:16px;">
             Hablar con un asesor ahora →
         </button>
     </div>
