@@ -770,5 +770,46 @@ h1,h2,h3{margin:0;text-wrap:balance}
   .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;transform:translateX(-100%);transition:.22s ease;z-index:50;height:100vh}
   .admin-sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,0.25)}
 }
-  .admin-sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,0.25)}
+
+/* ============================================================
+   RESPONSIVE MOVIL - cascada corregida
+   Este bloque va al final a proposito. Mas arriba hay un bloque
+   .btn duplicado que, al venir despues que .hide-m (linea 72) y que
+   la escala de tamanos (lineas 199-208) pero con la misma
+   especificidad, termina ganandoles. Por eso hay que reaplicar las
+   reglas despues para que ganen de verdad. Todo acotado a <=920px:
+   el desktop no cambia.
+   ============================================================ */
+@media(max-width:920px){
+  /* .hide-m vuelve a ocultarse. Antes la redefinicion de .btn la
+     convertia en inline-flex y dejaba visibles "Registrarse" y
+     "Mis Pedidos" en el navbar movil. */
+  .btn.hide-m{display:none}
+
+  /* La escala de tamanos vuelve a aplicarse: el .btn duplicado
+     sobrescribia padding y font-size, dejando .btn-sm igual a .btn. */
+  .btn-sm{padding:8px 14px;font-size:13px;min-height:38px}
+  .btn-xs{padding:6px 10px;font-size:12px;min-height:32px}
+
+  /* El boton del carrito se habia aplastado a 17px: la regla
+     .topnav-actions > *{padding-left:0!important;padding-right:0!important}
+     le borraba el padding y solo quedaba el icono de 15px.
+     Se le devuelve el padding y se vuelve un boton cuadrado
+     de ~44px. El espacio lo libera .btn.hide-m de arriba. */
+  .topnav-actions > .btn{padding-left:14px !important;padding-right:14px !important}
+  .btn > svg{flex-shrink:0}
+
+  /* La mobile-bar es position:fixed y tapaba el final de la pagina
+     (body y main no reservaban nada). */
+  body{padding-bottom:calc(80px + env(safe-area-inset-bottom, 0px))}
+  .mobile-bar{
+    bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+    max-width:calc(100vw - 24px);
+    overflow-x:auto;
+  }
+
+  /* Touch targets al token --touch-target que el CSS ya define.
+     .qty-btn era 24x24 y los botones de la barra movil 40px. */
+  .mobile-bar .btn{min-height:var(--touch-target)}
+  .qty-btn{width:var(--touch-target);height:var(--touch-target)}
 }
