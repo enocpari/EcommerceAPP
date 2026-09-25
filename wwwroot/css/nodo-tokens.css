@@ -686,6 +686,13 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .nav a.active{background:var(--fg);color:var(--surface);border-color:var(--fg)}
 .nav a:hover:not(.active){background:var(--bg);color:var(--fg);border-color:var(--border)}
 .nav a svg{flex-shrink:0}
+/* El menu lateral reutiliza .nav-pills, que esta disenada para una barra
+   horizontal: por eso le caia un border-radius de 999px que encerraba todo
+   el menu vertical dentro de un ovulo con borde. En columna el contorno no
+   aporta nada. Los items sueltos conservan su forma de pastilla.
+   Selector acotado al sidebar: el .nav-pills del navbar publico es horizontal
+   y ahi si debe verse la pastilla. */
+.admin-sidebar .nav-pills{border:0;border-radius:0;background:transparent;box-shadow:none}
 .sidebar-foot{padding:12px 16px;border-top:1px solid var(--border)}
 .admin-main{min-width:0;display:flex;flex-direction:column;background:var(--bg);background-color:var(--bg-fallback)}
 .admin-topbar{position:sticky;top:0;z-index:20;background:color-mix(in oklch, var(--bg) 88%, var(--surface));background-color:rgba(252,252,253,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px}
