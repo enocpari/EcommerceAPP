@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/nodo-tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EcommerceApp.styles.css" asp-append-version="true" />
+
+    <!-- PWA: manifest e iconos. Los colores salen de los tokens reales del CSS
+         (--accent = oklch(58% 0.18 255) = #A0CEFA, --bg-fallback = #fcfcfd). -->
+    <link rel="manifest" href="~/manifest.webmanifest" />
+    <meta name="theme-color" content="#A0CEFA" />
+    <meta name="application-name" content="NOVA" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="NOVA" />
+    <link rel="apple-touch-icon" href="~/icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="~/icons/icon-192.png" />
 </head>
 <body>
     <header class="topnav">
@@ -172,6 +185,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (WebEnv.IsProduction())
+    {
+        <script src="~/js/pwa.js" asp-append-version="true"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

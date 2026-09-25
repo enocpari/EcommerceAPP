@@ -1,0 +1,62 @@
+{
+  "name": "NOVA · Celulares y Audio High-End",
+  "short_name": "NOVA",
+  "description": "Tienda de celulares, auriculares y accesorios de alta fidelidad.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [ "standalone", "minimal-ui", "browser" ],
+  "orientation": "portrait-primary",
+  "theme_color": "#A0CEFA",
+  "background_color": "#fcfcfd",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": [ "shopping", "lifestyle" ],
+  "icons": [
+    {
+      "src": "/icons/icon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Catalogo",
+      "short_name": "Catalogo",
+      "url": "/Products?source=pwa-shortcut",
+      "icons": [ { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" } ]
+    },
+    {
+      "name": "Mi cuenta",
+      "short_name": "Cuenta",
+      "url": "/Account/Login?source=pwa-shortcut",
+      "icons": [ { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" } ]
+    }
+  ]
+}
