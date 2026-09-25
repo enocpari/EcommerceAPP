@@ -12,11 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar licencia QuestPDF (gratuita para uso educativo/opensource)
 QuestPDF.Settings.License = LicenseType.Community;
 
-// Compatibilidad de puerto dinámico para Render / Docker
-var port = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrEmpty(port))
+// Cargar User Secrets explícitamente en Development
+if (builder.Environment.IsDevelopment())
 {
-    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+    builder.Configuration.AddUserSecrets<Program>();
 }
 
 builder.Services.AddSingleton<StoreConfigService>();

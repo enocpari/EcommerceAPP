@@ -22,5 +22,10 @@ COPY --from=build /app/publish .
 # Variables de entorno para Render
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Comando de inicio con migraciones automáticas
-ENTRYPOINT ["sh", "-c", "dotnet ef database update && dotnet EcommerceApp.dll"]
+# Exponer el puerto que Render asigna (Render inyecta PORT=10000 por defecto)
+EXPOSE 8080
+EXPOSE 10000
+
+# Comando de inicio: ejecutar migraciones y luego la app
+# Usamos el PORT que inyecta Render
+ENTRYPOINT ["sh", "-c", "dotnet ef database update && dotnet EcommerceApp.dll --urls http://0.0.0.0:${PORT:-8080}"]
