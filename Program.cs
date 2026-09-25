@@ -1,4 +1,5 @@
 // Program.cs
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,14 @@ if (string.IsNullOrWhiteSpace(defaultConnection))
 
 builder.Services.AddSingleton<StoreConfigService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+
+// Persistir las claves de DataProtection en Postgres. Sin esto las claves se
+// guardan en /root/.aspnet/DataProtection-Keys dentro del contenedor y se pierden
+// en cada deploy, invalidando todas las cookies de sesion. SetApplicationName
+// fija el proposito del cifrado: si cambia, las claves actuales dejan de servir.
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<ApplicationDbContext>()
+    .SetApplicationName("EcommerceApp");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(defaultConnection, npgsql =>

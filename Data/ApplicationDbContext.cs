@@ -1,17 +1,23 @@
 // Data/ApplicationDbContext.cs
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Models;
 
 namespace EcommerceApp.Data
 {
+    // IDataProtectionKeyContext habilita PersistKeysToDbContext, que guarda las
+    // claves de cifrado de cookies/tokens en Postgres. Sin esto, las claves viven
+    // en el sistema de archivos del contenedor y se pierden en cada deploy de
+    // Render, lo que desloguea a todos los usuarios.
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : IdentityDbContext<ApplicationUser>(options)
+        : IdentityDbContext<ApplicationUser>(options), IDataProtectionKeyContext
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
