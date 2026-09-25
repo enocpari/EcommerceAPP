@@ -17,3 +17,14 @@ packages-microsoft-prod.deb
 ## macOS / Linux
 .DS_Store
 Thumbs.db
+
+## Secretos: nunca deben estar versionados
+.env
+.env.*
+!.env.example
+.opencode/supabase-auth.json
+appsettings.Local.json
+*.pfx
+
+## Connection strings reales con password (solo se versionan vacias)
+appsettings.Local.*.json

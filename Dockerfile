@@ -12,24 +12,14 @@ RUN dotnet restore "EcommerceApp.csproj"
 COPY . .
 RUN dotnet publish "EcommerceApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# =========================================================
-# Etapa 2: Ejecutar migraciones (usando SDK, desde /src)
-# =========================================================
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS migrate
-WORKDIR /src
-COPY --from=build /src .
-
-# Instalar EF Core tools
-RUN dotnet tool install --global dotnet-ef --version 10.0.0
-ENV PATH="$PATH:/root/.dotnet/tools"
-
-# Ejecutar migraciones (necesita connection string)
-ARG CONNECTION_STRING
-ENV ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
-RUN dotnet ef database update --project EcommerceApp.csproj
+# NOTA: las migraciones de EF Core NO se ejecutan en build time.
+# Render no expone las variables de entorno del servicio como build args de Docker,
+# y buildear contra la BD de produccion es una mala practica (mutacion de datos
+# durante el build). Se aplican al arrancar la app en Program.cs
+# (Database.MigrateAsync), que es donde existe la connection string.
 
 # =========================================================
-# Etapa 3: Imagen Final Liviana de Ejecución (ASP.NET 10)
+# Imagen Final Liviana de Ejecución (ASP.NET 10)
 # =========================================================
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
