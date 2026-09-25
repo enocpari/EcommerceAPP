@@ -60,6 +60,19 @@
                 <partial name="_LoginPartial" />
             </div>
         </div>
+
+        <!-- BUSCADOR MÓVIL. El buscador del navbar es .hide-m, así que en móvil
+             no quedaba forma de buscar. Esta barra solo se muestra en <=920px y
+             reusa la misma ruta que el de escritorio: GET /Products?search=...
+             El filtrado sigue siendo el de siempre, en la página de catálogo.
+             Es un <form> nativo, no necesita JS: Enter y el botón funcionan igual. -->
+        <form class="search-bar-m" method="get" action="/Products" role="search">
+            <div class="search-bar-m-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20L16.2 16.2"/></svg>
+                <input type="search" name="search" class="search-bar-m-input" placeholder="Buscar iPhone, Galaxy, Sony…" aria-label="Buscar productos" enterkeyhint="search" />
+                <button type="submit" class="btn btn-accent search-bar-m-btn">Buscar</button>
+            </div>
+        </form>
     </header>
 
     <main role="main">

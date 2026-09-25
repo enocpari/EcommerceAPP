@@ -772,6 +772,17 @@ h1,h2,h3{margin:0;text-wrap:balance}
 }
 
 /* ============================================================
+   BUSCADOR MOVIL
+   El buscador del navbar (.search-wrap) lleva .hide-m, asi que en
+   movil no quedaba ninguna forma de buscar. Esta barra vive solo
+   en <=920px y reusa la misma ruta que el de escritorio:
+   GET /Products?search=... El filtrado sigue siendo el de la
+   pagina de catalogo, no hay logica de busqueda nueva.
+   Oculta en desktop por defecto.
+   ============================================================ */
+.search-bar-m{display:none}
+
+/* ============================================================
    RESPONSIVE MOVIL - cascada corregida
    Este bloque va al final a proposito. Mas arriba hay un bloque
    .btn duplicado que, al venir despues que .hide-m (linea 72) y que
@@ -812,4 +823,33 @@ h1,h2,h3{margin:0;text-wrap:balance}
      .qty-btn era 24x24 y los botones de la barra movil 40px. */
   .mobile-bar .btn{min-height:var(--touch-target)}
   .qty-btn{width:var(--touch-target);height:var(--touch-target)}
+
+  /* Buscador movil, debajo del navbar. 100% del ancho disponible. */
+  .search-bar-m{display:block;padding-bottom:10px}
+  .search-bar-m-wrap{position:relative;display:flex;align-items:center;gap:8px}
+  .search-bar-m-wrap > svg{position:absolute;left:13px;color:var(--muted);pointer-events:none}
+  .search-bar-m-input{
+    flex:1;min-width:0;
+    height:var(--touch-target);
+    padding:0 14px 0 38px;
+    border:1px solid var(--border);
+    border-radius:var(--radius-full);
+    background:var(--surface);
+    font:inherit;
+    font-size:16px;
+    color:var(--fg);
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  /* 16px a proposito: por debajo de eso iOS Safari hace zoom al
+     enfocar el input. min-width:0 evita que el flex lo desborde
+     a 320px, y flex-shrink:0 que el boton no recorte su texto. */
+  .search-bar-m-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search-bar-m-input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  .search-bar-m-btn{flex-shrink:0;min-height:var(--touch-target);padding-inline:18px}
+
+  /* .filter-col era sticky con top:74px, pensado para el alto del
+     navbar de escritorio. En movil esa constante no aplica y la
+     columna se superpondria bajo el navbar fijo. */
+  .filter-col{position:static;top:auto}
 }
