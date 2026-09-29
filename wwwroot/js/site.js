@@ -513,4 +513,97 @@
 
     // Expose setButtonLoading for forms
     window.NodoUI.setButtonLoading = setButtonLoading;
+
+    // Voice Search (Web Speech API)
+    function initVoiceSearch() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.warn('Web Speech API not supported in this browser');
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'es-AR';
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        let isListening = false;
+        let currentInput = null;
+        let currentBtn = null;
+
+        recognition.onstart = () => {
+            isListening = true;
+            if (currentBtn) {
+                currentBtn.classList.add('listening');
+                currentBtn.setAttribute('aria-label', 'Escuchando... Haz clic para detener');
+                currentBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/></svg>';
+            }
+        };
+
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            if (currentInput) {
+                currentInput.value = transcript;
+                currentInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.warn('Speech recognition error:', event.error);
+            stopListening();
+        };
+
+        recognition.onend = () => {
+            stopListening();
+        };
+
+        function stopListening() {
+            if (isListening) {
+                isListening = false;
+                if (currentBtn) {
+                    currentBtn.classList.remove('listening');
+                    currentBtn.setAttribute('aria-label', 'Buscar por voz');
+                    currentBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-6 0z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>';
+                }
+                currentInput = null;
+                currentBtn = null;
+            }
+        }
+
+        function startListening(input, btn) {
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+            currentInput = input;
+            currentBtn = btn;
+            try {
+                recognition.start();
+            } catch (e) {
+                console.warn('Could not start recognition:', e);
+            }
+        }
+
+        // Attach to all voice search buttons
+        document.querySelectorAll('[data-voice-search]').forEach(btn => {
+            const inputId = btn.getAttribute('data-voice-search');
+            const input = document.getElementById(inputId);
+            if (input) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    startListening(input, btn);
+                });
+            }
+        });
+    }
+
+    // Initialize voice search on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVoiceSearch);
+    } else {
+        initVoiceSearch();
+    }
 })();

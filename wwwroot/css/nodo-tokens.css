@@ -586,9 +586,48 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .nav-actions-box .nav-btn-admin{background:var(--accent-soft);color:var(--accent);font-size:12px;border:1px solid color-mix(in oklch, var(--accent) 25%, transparent)}
 .nav-actions-box .nav-btn-admin:hover{background:var(--accent);color:#fff}
 .search-wrap{position:relative;flex:1;max-width:320px}
-.search-wrap input{width:100%;padding:10px 14px 10px 36px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:14px;color:var(--fg)}
+.search-wrap input{width:100%;padding:10px 44px 10px 36px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:14px;color:var(--fg)}
 .search-wrap input::placeholder{color:var(--muted)}
 .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+/* Voice search button */
+.voice-search-btn{
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--muted);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    transition:all var(--transition-fast);
+    z-index:2;
+}
+.voice-search-btn:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+}
+.voice-search-btn:focus-visible{
+    outline:none;
+    box-shadow:var(--focus-ring);
+}
+.voice-search-btn.listening{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    animation:pulse-mic 1.2s ease-in-out infinite;
+}
+@keyframes pulse-mic{
+    0%,100%{box-shadow:0 0 0 0 color-mix(in oklch, var(--accent) 40%, transparent)}
+    50%{box-shadow:0 0 0 8px transparent}
+}
+
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:999px;border:1px solid transparent;font-size:14px;font-weight:600;letter-spacing:-0.01em;transition:all .15s ease;white-space:nowrap}
 .btn:active{transform:translateY(1px)}
 .btn-primary{background:var(--fg);color:var(--surface);border-color:var(--fg)}
@@ -833,12 +872,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
   /* Buscador movil, debajo del navbar. 100% del ancho disponible. */
   .search-bar-m{display:block;padding-bottom:10px}
-  .search-bar-m-wrap{position:relative;display:flex;align-items:center;gap:8px}
-  .search-bar-m-wrap > svg{position:absolute;left:13px;color:var(--muted);pointer-events:none}
-  .search-bar-m-input{
+.search-bar-m-wrap{position:relative;display:flex;align-items:center;gap:8px}
+.search-bar-m-wrap > svg{position:absolute;left:13px;color:var(--muted);pointer-events:none}
+.search-bar-m-input{
     flex:1;min-width:0;
     height:var(--touch-target);
-    padding:0 14px 0 38px;
+    padding:0 44px 0 38px;
     border:1px solid var(--border);
     border-radius:var(--radius-full);
     background:var(--surface);
@@ -847,7 +886,39 @@ h1,h2,h3{margin:0;text-wrap:balance}
     color:var(--fg);
     appearance:none;
     -webkit-appearance:none;
-  }
+}
+.search-bar-m-wrap .voice-search-btn{
+    position:absolute;
+    right:44px;
+    top:50%;
+    transform:translateY(-50%);
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--muted);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    transition:all var(--transition-fast);
+    z-index:2;
+}
+.search-bar-m-wrap .voice-search-btn:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+}
+.search-bar-m-wrap .voice-search-btn:focus-visible{
+    outline:none;
+    box-shadow:var(--focus-ring);
+}
+.search-bar-m-wrap .voice-search-btn.listening{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    animation:pulse-mic 1.2s ease-in-out infinite;
+}
   /* 16px a proposito: por debajo de eso iOS Safari hace zoom al
      enfocar el input. min-width:0 evita que el flex lo desborde
      a 320px, y flex-shrink:0 que el boton no recorte su texto. */
